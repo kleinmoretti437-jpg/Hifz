@@ -980,6 +980,141 @@
             color: var(--text-gray);
         }
 
+
+        /* ===== LEGAL PAGES — TERMS & PRIVACY ===== */
+        .legal-page {
+            min-height: 100vh;
+            background: linear-gradient(170deg, #f0fdfa 0%, #ffffff 45%, #f8fffe 100%);
+            padding-bottom: 70px;
+        }
+        .legal-hero {
+            padding: 110px 30px 55px;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(13,148,136,0.08), rgba(6,182,212,0.05));
+            border-bottom: 1px solid rgba(13,148,136,0.08);
+        }
+        .legal-hero-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 18px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--gradient-1);
+            color: white;
+            font-size: 26px;
+            box-shadow: var(--shadow-md);
+        }
+        .legal-hero h1 {
+            font-size: 2.35rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+        .legal-hero p {
+            max-width: 680px;
+            margin: 0 auto;
+            color: var(--text-gray);
+            font-size: 0.92rem;
+            line-height: 1.8;
+        }
+        .legal-wrap {
+            max-width: 900px;
+            margin: -20px auto 0;
+            padding: 0 24px;
+            position: relative;
+        }
+        .legal-card {
+            background: #fff;
+            border: 1px solid rgba(13,148,136,0.09);
+            border-radius: 20px;
+            box-shadow: var(--shadow-md);
+            padding: 38px 42px;
+        }
+        .legal-updated {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: rgba(13,148,136,0.08);
+            color: var(--primary);
+            border-radius: 50px;
+            padding: 7px 13px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+        }
+        .legal-card h2 {
+            font-size: 1.12rem;
+            color: var(--text-dark);
+            margin: 28px 0 9px;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+        .legal-card h2:first-of-type { margin-top: 0; }
+        .legal-card h2 i { color: var(--primary); font-size: 0.95rem; }
+        .legal-card h3 {
+            font-size: 0.94rem;
+            color: var(--text-dark);
+            margin: 18px 0 7px;
+        }
+        .legal-card p,
+        .legal-card li {
+            color: var(--text-gray);
+            font-size: 0.84rem;
+            line-height: 1.85;
+        }
+        .legal-card ul {
+            padding-left: 20px;
+            margin: 8px 0 14px;
+        }
+        .legal-card li { margin-bottom: 5px; }
+        .legal-note {
+            margin-top: 25px;
+            padding: 15px 17px;
+            border-radius: 14px;
+            background: rgba(99,102,241,0.05);
+            border: 1px solid rgba(99,102,241,0.12);
+            display: flex;
+            gap: 11px;
+            align-items: flex-start;
+        }
+        .legal-note i {
+            color: #6366f1;
+            margin-top: 3px;
+            flex-shrink: 0;
+        }
+        .legal-note p {
+            font-size: 0.78rem;
+            margin: 0;
+        }
+        .legal-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            margin-top: 22px;
+            color: var(--primary);
+            font-size: 0.82rem;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .legal-back:hover { color: var(--primary-dark); }
+
+        @media (max-width: 768px) {
+            .legal-hero { padding: 95px 20px 45px; }
+            .legal-hero h1 { font-size: 1.8rem; }
+            .legal-wrap { padding: 0 16px; }
+            .legal-card { padding: 27px 22px; border-radius: 17px; }
+        }
+        @media (max-width: 480px) {
+            .legal-hero { padding: 88px 16px 40px; }
+            .legal-hero-icon { width: 56px; height: 56px; border-radius: 16px; }
+            .legal-hero h1 { font-size: 1.55rem; }
+            .legal-hero p { font-size: 0.82rem; }
+            .legal-card p, .legal-card li { font-size: 0.79rem; }
+        }
+
         /* ===== FOOTER ===== */
         .footer {
             background: var(--text-dark);
@@ -3369,6 +3504,13 @@
                         <li><a href="#"><i class="fas fa-location-dot" style="margin-right:8px;"></i>Rembang, Indonesia</a></li>
                     </ul>
                 </div>
+                <div class="footer-links footer-legal-links">
+                    <h4>Informasi</h4>
+                    <ul>
+                        <li><a href="#" onclick="navigateTo('terms'); return false;"><i class="fas fa-file-contract" style="margin-right:8px;"></i>Syarat & Ketentuan</a></li>
+                        <li><a href="#" onclick="navigateTo('privacy'); return false;"><i class="fas fa-shield-halved" style="margin-right:8px;"></i>Kebijakan Privasi</a></li>
+                    </ul>
+                </div>
             </div>
             <div class="footer-bottom">
                 <p>&copy; 2026 HIFZ NAFS. All rights reserved.</p>
@@ -3376,6 +3518,7 @@
             </div>
         </div>
     </footer>
+
 
     <!-- Scroll to Top Button -->
     <button class="scroll-top" id="scrollTop" onclick="scrollToTop()">
@@ -3496,7 +3639,7 @@
         }
 
         const SPA_PAGES = ['beranda','fitur','fitur-a','fitur-b','fitur-c','fitur-d','fitur-alert','fitur-ruh','fitur-ruh-a','fitur-ruh-b','dashboard','tentang',
-                           'hub-a','hub-b','hub-alert','hub-d','hub-ruh','kontak'];
+                           'hub-a','hub-b','hub-alert','hub-d','hub-ruh','kontak','terms','privacy'];
 
         // Mapping: saat klik dari beranda → tampilkan hub dulu
         const HUB_MAP = {
@@ -4475,14 +4618,42 @@
                     const { data: { user } } = await window._sb.auth.getUser();
                     if (user) {
                         const uid = user.id;
-                        await window._sb.from('hifz_check_entries').insert({
+                        // Maksimal 1 entry mood per hari per user: update jika hari ini sudah ada, insert jika belum.
+                        const now = new Date();
+                        const dayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                        const nextDayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+                        const { data: todayEntries, error: todayLookupError } = await window._sb
+                            .from('hifz_check_entries')
+                            .select('id, created_at')
+                            .eq('user_id', uid)
+                            .gte('created_at', dayStart.toISOString())
+                            .lt('created_at', nextDayStart.toISOString())
+                            .order('created_at', { ascending: false })
+                            .limit(1);
+                        if (todayLookupError) throw todayLookupError;
+
+                        const moodPayload = {
                             user_id: uid,
                             mood: selectedMoodVal,
                             stress: selectedMoodVal,
                             hopelessness: selectedMoodVal,
                             withdraw: selectedMoodVal,
                             note: MOOD_LABELS[selectedMoodVal] || null
-                        });
+                        };
+
+                        if (todayEntries && todayEntries.length) {
+                            const { error: updateError } = await window._sb
+                                .from('hifz_check_entries')
+                                .update(moodPayload)
+                                .eq('id', todayEntries[0].id)
+                                .eq('user_id', uid);
+                            if (updateError) throw updateError;
+                        } else {
+                            const { error: insertError } = await window._sb
+                                .from('hifz_check_entries')
+                                .insert(moodPayload);
+                            if (insertError) throw insertError;
+                        }
                         _authToast('☁️ Mood tersimpan ke cloud', 'success');
                         if (window.refreshDashboard) window.refreshDashboard();
                     } else {
@@ -4905,6 +5076,115 @@
     </script>
 
     </div>
+
+    <!-- ============================================================
+         PAGE TERMS & CONDITIONS
+    ============================================================ -->
+    <div id="page-terms" class="page">
+        <div class="legal-page">
+            <div class="legal-hero">
+                <div class="legal-hero-icon"><i class="fas fa-file-contract"></i></div>
+                <h1>Syarat & Ketentuan</h1>
+                <p>Ketentuan penggunaan HIFZ NAFS agar setiap pengguna dapat menggunakan platform dengan aman, nyaman, dan bertanggung jawab.</p>
+            </div>
+            <div class="legal-wrap">
+                <div class="legal-card">
+                    <div class="legal-updated"><i class="fas fa-calendar-days"></i> Berlaku sejak 20 Agustus 2026</div>
+
+                    <h2><i class="fas fa-circle-info"></i> 1. Tentang HIFZ NAFS</h2>
+                    <p>HIFZ NAFS merupakan platform psikoedukasi digital yang menyediakan materi, refleksi, pemantauan kondisi diri, edukasi, latihan coping, serta ruang dukungan untuk membantu remaja mengenali dan menjaga kondisi psikologisnya.</p>
+
+                    <h2><i class="fas fa-user-check"></i> 2. Penggunaan Platform</h2>
+                    <p>Dengan mengakses atau menggunakan HIFZ NAFS, kamu setuju untuk menggunakan seluruh fitur secara wajar, bertanggung jawab, dan tidak merugikan pengguna lain.</p>
+                    <ul>
+                        <li>Memberikan informasi akun yang benar dan tidak menggunakan identitas orang lain.</li>
+                        <li>Menjaga kerahasiaan informasi akun dan akses masuk milikmu.</li>
+                        <li>Tidak menggunakan platform untuk menyebarkan konten yang melanggar hukum, mengancam, melecehkan, atau membahayakan orang lain.</li>
+                        <li>Tidak mencoba mengganggu, merusak, mengeksploitasi, atau mengakses bagian sistem yang tidak diperuntukkan bagi pengguna.</li>
+                    </ul>
+
+                    <h2><i class="fas fa-heart-pulse"></i> 3. Fitur Kesehatan Mental</h2>
+                    <p>HIFZ NAFS ditujukan untuk psikoedukasi, refleksi, dan pengenalan kondisi diri. Hasil check-in, skrining, jurnal, grafik, maupun fitur HIFZ Alert bukan diagnosis psikologis dan tidak menggantikan pemeriksaan atau penanganan oleh psikolog, psikiater, konselor, atau tenaga profesional lainnya.</p>
+
+                    <h2><i class="fas fa-comments"></i> 4. Konten Komunitas</h2>
+                    <p>Jika kamu menggunakan fitur komunitas, cerita anonim, atau ruang kolaborasi, kamu bertanggung jawab atas konten yang kamu kirimkan. Jangan membagikan informasi pribadi yang sensitif atau informasi orang lain tanpa izin.</p>
+
+                    <h2><i class="fas fa-copyright"></i> 5. Hak Kekayaan Intelektual</h2>
+                    <p>Nama, identitas visual, desain, materi, teks, ilustrasi, dan komponen HIFZ NAFS merupakan bagian dari platform dan tidak boleh disalin, dimodifikasi, atau digunakan kembali untuk kepentingan komersial tanpa izin yang sesuai.</p>
+
+                    <h2><i class="fas fa-ban"></i> 6. Pembatasan dan Penghentian Akses</h2>
+                    <p>Akses terhadap fitur tertentu dapat dibatasi atau dihentikan apabila ditemukan penggunaan yang melanggar ketentuan ini, mengganggu keamanan platform, atau merugikan pengguna lain.</p>
+
+                    <h2><i class="fas fa-arrows-rotate"></i> 7. Perubahan Ketentuan</h2>
+                    <p>Ketentuan ini dapat diperbarui sewaktu-waktu untuk menyesuaikan perkembangan fitur, keamanan, atau kebutuhan platform. Versi terbaru akan ditampilkan pada halaman ini.</p>
+
+                    <div class="legal-note">
+                        <i class="fas fa-shield-heart"></i>
+                        <p><strong style="color:var(--text-dark);">Catatan penting:</strong> Jika kamu sedang mengalami kondisi yang membutuhkan bantuan segera, jangan hanya mengandalkan fitur digital HIFZ NAFS. Cari bantuan dari orang yang kamu percaya atau tenaga profesional yang sesuai.</p>
+                    </div>
+
+                    <a href="#" class="legal-back" onclick="navigateTo('beranda'); return false;"><i class="fas fa-arrow-left"></i> Kembali ke Beranda</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         PAGE PRIVACY POLICY
+    ============================================================ -->
+    <div id="page-privacy" class="page">
+        <div class="legal-page">
+            <div class="legal-hero">
+                <div class="legal-hero-icon"><i class="fas fa-shield-halved"></i></div>
+                <h1>Kebijakan Privasi</h1>
+                <p>Penjelasan mengenai jenis data yang dapat diproses HIFZ NAFS, tujuan penggunaannya, serta langkah yang dapat kamu lakukan untuk menjaga privasimu.</p>
+            </div>
+            <div class="legal-wrap">
+                <div class="legal-card">
+                    <div class="legal-updated"><i class="fas fa-calendar-days"></i> Berlaku sejak 20 Agustus 2026</div>
+
+                    <h2><i class="fas fa-database"></i> 1. Data yang Dapat Diproses</h2>
+                    <p>Sesuai fitur yang tersedia di HIFZ NAFS, data yang dapat diproses dapat mencakup:</p>
+                    <ul>
+                        <li>Data akun seperti alamat email dan informasi profil yang kamu berikan saat menggunakan akun.</li>
+                        <li>Data aktivitas kesehatan mental yang kamu masukkan melalui fitur check-in, skrining, refleksi, atau pemantauan yang tersedia.</li>
+                        <li>Data jurnal atau konten yang kamu buat melalui fitur yang memang menyimpan data tersebut.</li>
+                        <li>Konten yang kamu kirimkan pada fitur komunitas, termasuk cerita, diskusi, atau pesan yang tersedia pada platform.</li>
+                        <li>Data teknis yang diperlukan agar fungsi antarmuka dan penyimpanan lokal tertentu dapat berjalan.</li>
+                    </ul>
+
+                    <h2><i class="fas fa-bullseye"></i> 2. Tujuan Penggunaan Data</h2>
+                    <p>Data digunakan untuk menyediakan, menjalankan, menampilkan, dan meningkatkan fitur HIFZ NAFS sesuai fungsi yang tersedia, termasuk membantu menampilkan riwayat, ringkasan, pemantauan, serta pengalaman penggunaan akun.</p>
+
+                    <h2><i class="fas fa-server"></i> 3. Penyimpanan Data</h2>
+                    <p>HIFZ NAFS menggunakan layanan Supabase sebagai bagian dari infrastruktur backend untuk autentikasi dan penyimpanan data fitur tertentu. Data hanya diproses sejauh diperlukan oleh fungsi platform yang tersedia.</p>
+
+                    <h2><i class="fas fa-user-shield"></i> 4. Kerahasiaan dan Keamanan</h2>
+                    <p>Kami berupaya menjaga data pengguna dengan langkah teknis yang sesuai dengan kemampuan platform. Namun, tidak ada sistem digital yang dapat menjamin keamanan secara mutlak. Karena itu, jangan masukkan kata sandi, kode keamanan, atau informasi sangat sensitif yang tidak diperlukan ke dalam fitur HIFZ NAFS.</p>
+
+                    <h2><i class="fas fa-users"></i> 5. Data pada Fitur Komunitas</h2>
+                    <p>Konten yang kamu kirimkan pada ruang komunitas dapat diproses agar dapat ditampilkan kepada pengguna lain sesuai fungsi fitur tersebut. Meskipun tersedia fitur cerita anonim, kamu tetap perlu menghindari memasukkan nama lengkap, alamat, nomor telepon, atau informasi lain yang dapat mengidentifikasi dirimu maupun orang lain.</p>
+
+                    <h2><i class="fas fa-cookie-bite"></i> 6. Penyimpanan Lokal</h2>
+                    <p>Beberapa preferensi atau status penggunaan tertentu dapat disimpan pada penyimpanan lokal perangkat untuk menjaga fungsi antarmuka. Data yang tersimpan secara lokal berada pada perangkat dan dapat dipengaruhi oleh pengaturan atau tindakan pengguna terhadap browser.</p>
+
+                    <h2><i class="fas fa-user-gear"></i> 7. Hak Pengguna</h2>
+                    <p>Kamu dapat meminta informasi mengenai data yang berkaitan dengan penggunaan akunmu dan menghubungi pengelola platform apabila memiliki pertanyaan, permintaan, atau kekhawatiran mengenai privasi.</p>
+
+                    <h2><i class="fas fa-arrows-rotate"></i> 8. Perubahan Kebijakan</h2>
+                    <p>Kebijakan ini dapat diperbarui apabila terdapat perubahan fitur, mekanisme pemrosesan data, atau kebutuhan keamanan. Perubahan akan ditampilkan pada halaman ini beserta tanggal berlakunya.</p>
+
+                    <div class="legal-note">
+                        <i class="fas fa-circle-info"></i>
+                        <p><strong style="color:var(--text-dark);">Penting:</strong> HIFZ NAFS tidak meminta kamu memasukkan informasi yang tidak diperlukan untuk penggunaan fitur. Tetap jaga kerahasiaan akun dan hindari membagikan data pribadi sensitif di ruang komunitas.</p>
+                    </div>
+
+                    <a href="#" class="legal-back" onclick="navigateTo('beranda'); return false;"><i class="fas fa-arrow-left"></i> Kembali ke Beranda</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- ============================================================
          PAGE KONTAK — halaman terpisah, akses via navbar
     ============================================================ -->
@@ -7459,43 +7739,74 @@
             /* ── chart instance holder ── */
             let alertChart = null;
 
-            /* ── Synthetic demo data (fallback when Supabase empty/unreachable) ── */
-            function syntheticData() {
-                const today = new Date();
-                const rows = [];
-                // Simulate declining mood + declining mental health over 14 days
-                const moodBase   = [4,4,3,4,3,3,2,3,2,2,1,2,2,1];
-                const mentalBase = [4,4,4,3,4,3,3,2,3,2,2,2,1,2];
-                for (let i = 13; i >= 0; i--) {
-                    const d = new Date(today); d.setDate(d.getDate() - i);
-                    rows.push({
-                        created_at  : d.toISOString(),
-                        mood        : moodBase[13 - i],
-                        stress: mentalBase[13-i], hopelessness: mentalBase[13-i], withdraw: mentalBase[13-i]
-                    });
+            /* ── Fetch real HIFZ Alert data from Supabase ── */
+            async function fetchData(days) {
+                try {
+                    const { data: { session }, error: sessionError } = await window._sb.auth.getSession();
+                    if (sessionError) throw sessionError;
+                    if (!session || !session.user) return { mood: [], skrining: [] };
+
+                    const uid = session.user.id;
+                    const now = new Date();
+                    const start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - (days - 1));
+                    const end = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+
+                    const [moodResult, skriningResult] = await Promise.all([
+                        window._sb.from('hifz_check_entries')
+                            .select('created_at,mood')
+                            .eq('user_id', uid)
+                            .gte('created_at', start.toISOString())
+                            .lt('created_at', end.toISOString())
+                            .order('created_at', { ascending: true }),
+                        window._sb.from('hn_skrining_results')
+                            .select('created_at,total_score')
+                            .eq('user_id', uid)
+                            .gte('created_at', start.toISOString())
+                            .lt('created_at', end.toISOString())
+                            .order('created_at', { ascending: true })
+                    ]);
+
+                    if (moodResult.error) throw moodResult.error;
+                    if (skriningResult.error) throw skriningResult.error;
+
+                    return {
+                        mood: Array.isArray(moodResult.data) ? moodResult.data : [],
+                        skrining: Array.isArray(skriningResult.data) ? skriningResult.data : []
+                    };
+                } catch (e) {
+                    console.warn('[HIFZ Alert] Gagal mengambil data Supabase:', e);
+                    return { mood: [], skrining: [], error: e };
                 }
-                return rows;
             }
 
-            /* ── Fetch from Supabase ── */
-            async function fetchData() {
-                try {
-                    const cutoff = new Date();
-                    cutoff.setDate(cutoff.getDate() - 14);
-                    const url = `${SUPABASE_URL}/rest/v1/${TABLE_MOOD}?select=created_at,mood,stress,hopelessness,withdraw&created_at=gte.${cutoff.toISOString()}&order=created_at.asc&limit=100`;
-                    const res = await fetch(url, {
-                        headers: {
-                            'apikey'       : SUPABASE_KEY,
-                            'Authorization': 'Bearer ' + SUPABASE_KEY,
-                            'Content-Type' : 'application/json'
-                        }
-                    });
-                    if (!res.ok) throw new Error('fetch_fail');
-                    const data = await res.json();
-                    return (Array.isArray(data) && data.length >= 3) ? data : null;
-                } catch(e) {
-                    return null;
-                }
+            function localDateKey(date) {
+                const y = date.getFullYear();
+                const m = String(date.getMonth() + 1).padStart(2, '0');
+                const d = String(date.getDate()).padStart(2, '0');
+                return `${y}-${m}-${d}`;
+            }
+
+            function normalizeAlertData(data) {
+                const moodByDate = new Map();
+                const skriningByDate = new Map();
+
+                (data.mood || []).forEach(row => {
+                    if (!row || !row.created_at) return;
+                    const key = localDateKey(new Date(row.created_at));
+                    // Satu mood per hari seharusnya sudah dijaga saat submit; latest tetap dipakai sebagai pengaman.
+                    const prev = moodByDate.get(key);
+                    if (!prev || new Date(row.created_at) > new Date(prev.created_at)) moodByDate.set(key, row);
+                });
+
+                (data.skrining || []).forEach(row => {
+                    if (!row || !row.created_at || row.total_score == null) return;
+                    const key = localDateKey(new Date(row.created_at));
+                    // Jika ada lebih dari satu skrining pada hari yang sama, grafik memakai hasil terbaru hari itu.
+                    const prev = skriningByDate.get(key);
+                    if (!prev || new Date(row.created_at) > new Date(prev.created_at)) skriningByDate.set(key, row);
+                });
+
+                return { moodByDate, skriningByDate };
             }
 
             /* ── Pattern Detection Engine ── */
@@ -7631,26 +7942,56 @@
                     </div>`).join('');
             }
 
-            /* ── Build Chart.js trend chart ── */
-            function renderChart(rows) {
+            /* ── Build Chart.js trend chart from real Supabase data ── */
+            function ensureAlertRangeToggle() {
+                const chartWrap = document.getElementById('alertChartWrap');
+                if (!chartWrap || document.getElementById('alertRangeToggle')) return;
+                const header = chartWrap.firstElementChild;
+                if (!header) return;
+
+                const control = document.createElement('div');
+                control.id = 'alertRangeToggle';
+                control.style.cssText = 'display:flex;gap:4px;padding:3px;border-radius:10px;background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.10);';
+                control.innerHTML = `
+                    <button type="button" data-days="14" style="border:none;padding:6px 11px;border-radius:8px;background:#6366f1;color:white;font-family:'Poppins',sans-serif;font-size:0.68rem;font-weight:700;cursor:pointer;transition:all .2s;">14 Hari</button>
+                    <button type="button" data-days="30" style="border:none;padding:6px 11px;border-radius:8px;background:transparent;color:#6366f1;font-family:'Poppins',sans-serif;font-size:0.68rem;font-weight:700;cursor:pointer;transition:all .2s;">30 Hari</button>`;
+                header.appendChild(control);
+
+                control.querySelectorAll('button').forEach(btn => {
+                    btn.addEventListener('click', async function() {
+                        const days = Number(this.dataset.days);
+                        window._hifzAlertRange = days;
+                        control.querySelectorAll('button').forEach(b => {
+                            const active = Number(b.dataset.days) === days;
+                            b.style.background = active ? '#6366f1' : 'transparent';
+                            b.style.color = active ? 'white' : '#6366f1';
+                        });
+                        await window.alertInit();
+                    });
+                });
+            }
+
+            function renderChart(data, days) {
                 const canvas = document.getElementById('alertTrendChart');
                 if (!canvas) return;
                 if (alertChart) { alertChart.destroy(); alertChart = null; }
 
-                // Prepare 14-day grid
+                const { moodByDate, skriningByDate } = normalizeAlertData(data);
                 const today = new Date();
-                const labels = [], moodArr = [], mentalArr = [];
+                const labels = [], moodArr = [], skriningArr = [];
 
-                for (let i = 13; i >= 0; i--) {
-                    const d = new Date(today); d.setDate(d.getDate() - i);
-                    const key = d.toISOString().slice(0, 10);
-                    labels.push(key.slice(5)); // MM-DD
-
-                    // Find matching row
-                    const match = rows.find(r => r.created_at && r.created_at.slice(0, 10) === key);
-                    moodArr.push(match ? Number(match.mood || null) : null);
-                    const _s=match?Number(match.stress||3):null,_h=match?Number(match.hopelessness||3):null,_w=match?Number(match.withdraw||3):null; mentalArr.push(match && _s!==null ? Math.round((6-((_s+_h+_w)/3))*10)/10 : null);
+                for (let i = days - 1; i >= 0; i--) {
+                    const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() - i);
+                    const key = localDateKey(d);
+                    labels.push(`${String(d.getDate()).padStart(2,'0')}-${String(d.getMonth()+1).padStart(2,'0')}`);
+                    const mood = moodByDate.get(key);
+                    const skrining = skriningByDate.get(key);
+                    moodArr.push(mood && mood.mood != null ? Number(mood.mood) : null);
+                    skriningArr.push(skrining && skrining.total_score != null ? Number(skrining.total_score) : null);
                 }
+
+                const titleEl = document.querySelector('#alertChartWrap p');
+                if (titleEl) titleEl.textContent = `Tren ${days} Hari Terakhir`;
 
                 alertChart = new Chart(canvas, {
                     type: 'line',
@@ -7664,22 +8005,24 @@
                                 backgroundColor: 'rgba(99,102,241,0.08)',
                                 tension: 0.4,
                                 fill: false,
-                                pointRadius: 4,
+                                pointRadius: moodArr.map(v => v == null ? 0 : 4),
                                 pointBackgroundColor: '#6366f1',
-                                spanGaps: true,
-                                borderWidth: 2.5
+                                spanGaps: false,
+                                borderWidth: 2.5,
+                                yAxisID: 'yMood'
                             },
                             {
-                                label: 'Kesehatan Mental',
-                                data: mentalArr,
+                                label: 'Skor Skrining',
+                                data: skriningArr,
                                 borderColor: '#0d9488',
                                 backgroundColor: 'rgba(13,148,136,0.08)',
                                 tension: 0.4,
                                 fill: false,
-                                pointRadius: 4,
+                                pointRadius: skriningArr.map(v => v == null ? 0 : 4),
                                 pointBackgroundColor: '#0d9488',
-                                spanGaps: true,
-                                borderWidth: 2.5
+                                spanGaps: false,
+                                borderWidth: 2.5,
+                                yAxisID: 'ySkrining'
                             }
                         ]
                     },
@@ -7705,7 +8048,8 @@
                                 grid: { color: 'rgba(0,0,0,0.04)' },
                                 ticks: { font: { family: 'Poppins', size: 10 }, color: '#94a3b8', maxRotation: 45 }
                             },
-                            y: {
+                            yMood: {
+                                position: 'left',
                                 min: 1, max: 5,
                                 grid: { color: 'rgba(0,0,0,0.05)' },
                                 ticks: {
@@ -7713,6 +8057,16 @@
                                     font: { family: 'Poppins', size: 10 },
                                     color: '#94a3b8',
                                     callback: v => ['','Sangat Baik','Baik','Sedang','Kurang','Buruk'][v] || v
+                                }
+                            },
+                            ySkrining: {
+                                position: 'right',
+                                min: 10, max: 70,
+                                grid: { drawOnChartArea: false },
+                                ticks: {
+                                    stepSize: 10,
+                                    font: { family: 'Poppins', size: 10 },
+                                    color: '#0d9488'
                                 }
                             }
                         }
@@ -7726,38 +8080,39 @@
                 document.getElementById('alertLoading').style.display = 'block';
                 document.getElementById('alertNoData').style.display = 'none';
                 document.getElementById('alertDashboard').style.display = 'none';
+                ensureAlertRangeToggle();
 
-                let rows = await fetchData();
-
-                // Fallback: use synthetic demo data so the UI is always functional
-                const isDemo = !rows;
-                if (isDemo) rows = syntheticData();
+                const days = Number(window._hifzAlertRange || 14);
+                const data = await fetchData(days);
+                const hasData = (data.mood && data.mood.length) || (data.skrining && data.skrining.length);
 
                 document.getElementById('alertLoading').style.display = 'none';
 
-                if (!rows || rows.length < 3) {
+                // Tidak perlu menunggu 14/30 hari. Tampilkan grafik selama ada minimal satu data real.
+                if (!hasData) {
                     document.getElementById('alertNoData').style.display = 'block';
                     return;
                 }
 
                 document.getElementById('alertDashboard').style.display = 'block';
 
-                // Detect patterns
-                const { score, patterns } = detectPatterns(rows);
+                // Status/pola tetap memakai data real mood yang sudah ada; tidak ada data simulasi.
+                const patternRows = (data.mood || []).map(r => ({
+                    created_at: r.created_at,
+                    mood: r.mood
+                }));
+                const { score, patterns } = detectPatterns(patternRows);
                 const statusKey = getStatus(score);
 
                 renderStatus(statusKey);
                 renderPatterns(patterns);
-                renderChart(rows);
+                renderChart(data, days);
                 renderActions(statusKey);
 
-                // Timestamp
                 const now = new Date();
-                const demoNote = isDemo ? ' · Menampilkan data simulasi (demo)' : '';
                 document.getElementById('alertTimestamp').textContent =
-                    `Diperbarui: ${now.toLocaleDateString('id-ID', {day:'numeric',month:'long',year:'numeric'})} pukul ${now.toLocaleTimeString('id-ID', {hour:'2-digit',minute:'2-digit'})}${demoNote}`;
+                    `Diperbarui: ${now.toLocaleDateString('id-ID', {day:'numeric',month:'long',year:'numeric'})} pukul ${now.toLocaleTimeString('id-ID', {hour:'2-digit',minute:'2-digit'})}`;
 
-                // Apply mode after render
                 applyAlertMode();
             };
 
