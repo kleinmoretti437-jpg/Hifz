@@ -7469,7 +7469,7 @@
                     rows.push({
                         created_at  : d.toISOString(),
                         mood        : moodBase[13 - i],
-                        mental_health: mentalBase[13 - i]
+                        stress: mentalBase[13-i], hopelessness: mentalBase[13-i], withdraw: mentalBase[13-i]
                     });
                 }
                 return rows;
@@ -7480,7 +7480,7 @@
                 try {
                     const cutoff = new Date();
                     cutoff.setDate(cutoff.getDate() - 14);
-                    const url = `${SUPABASE_URL}/rest/v1/${TABLE_MOOD}?select=created_at,mood,mental_health&created_at=gte.${cutoff.toISOString()}&order=created_at.asc&limit=100`;
+                    const url = `${SUPABASE_URL}/rest/v1/${TABLE_MOOD}?select=created_at,mood,stress,hopelessness,withdraw&created_at=gte.${cutoff.toISOString()}&order=created_at.asc&limit=100`;
                     const res = await fetch(url, {
                         headers: {
                             'apikey'       : SUPABASE_KEY,
@@ -7514,8 +7514,10 @@
                     score += moodSlope < -0.6 ? 2 : 1;
                 }
 
-                // 2. Mental health decline
-                const mental = recent.map(r => Number(r.mental_health || 3));
+                // 2. Mental health decline — dihitung dari stress, hopelessness, withdraw
+                const mental = recent.map(r => { const s=Number(r.stress||3),h=Number(r.hopelessness||3),w=Number(r.withdraw||3); return Math.round((6-((s+h+w)/3))*10)/10; });
+
+
                 const mentalSlope = linSlope(mental);
                 const avgMental = mental.reduce((a,b) => a+b, 0) / mental.length;
                 if (mentalSlope < -0.3) {
@@ -7645,7 +7647,7 @@
                     // Find matching row
                     const match = rows.find(r => r.created_at && r.created_at.slice(0, 10) === key);
                     moodArr.push(match ? Number(match.mood || null) : null);
-                    mentalArr.push(match ? Number(match.mental_health || null) : null);
+                    const _s=match?Number(match.stress||3):null,_h=match?Number(match.hopelessness||3):null,_w=match?Number(match.withdraw||3):null; mentalArr.push(match && _s!==null ? Math.round((6-((_s+_h+_w)/3))*10)/10 : null);
                 }
 
                 alertChart = new Chart(canvas, {
