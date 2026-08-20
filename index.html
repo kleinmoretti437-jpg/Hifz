@@ -7679,6 +7679,7 @@
                                 <div style="position:relative;height:210px;">
                                     <canvas id="alertTrendChart"></canvas>
                                 </div>
+                                <p id="alertChartDataNote" style="font-size:0.68rem;color:var(--text-gray);margin:8px 0 0;text-align:center;min-height:18px;line-height:1.5;"></p>
                             </div>
 
                             <!-- DIVIDER EWS -->
@@ -7990,8 +7991,25 @@
                     skriningArr.push(skrining && skrining.total_score != null ? Number(skrining.total_score) : null);
                 }
 
+                const moodPointCount = moodArr.filter(v => v != null).length;
+                const skriningPointCount = skriningArr.filter(v => v != null).length;
+
                 const titleEl = document.querySelector('#alertChartWrap p');
                 if (titleEl) titleEl.textContent = `Tren ${days} Hari Terakhir`;
+
+                // Data sparse tetap ditampilkan sebagai titik. Garis hanya akan terbentuk
+                // jika memang ada minimal 2 data real pada seri tersebut — tidak membuat
+                // data/interpolasi palsu hanya agar garis terlihat.
+                const chartNote = document.getElementById('alertChartDataNote');
+                if (chartNote) {
+                    if (moodPointCount < 2 && skriningPointCount < 2) {
+                        chartNote.textContent = 'Data masih terbatas. Titik menunjukkan data yang sudah tercatat; garis akan terbentuk saat ada data pada hari berikutnya.';
+                    } else if (moodPointCount < 2 || skriningPointCount < 2) {
+                        chartNote.textContent = 'Beberapa data masih terbatas. Hari tanpa data tetap dibiarkan kosong agar grafik tidak memalsukan tren.';
+                    } else {
+                        chartNote.textContent = '';
+                    }
+                }
 
                 alertChart = new Chart(canvas, {
                     type: 'line',
@@ -8005,7 +8023,7 @@
                                 backgroundColor: 'rgba(99,102,241,0.08)',
                                 tension: 0.4,
                                 fill: false,
-                                pointRadius: moodArr.map(v => v == null ? 0 : 4),
+                                pointRadius: moodArr.map(v => v == null ? 0 : 5),
                                 pointBackgroundColor: '#6366f1',
                                 spanGaps: false,
                                 borderWidth: 2.5,
@@ -8018,7 +8036,7 @@
                                 backgroundColor: 'rgba(13,148,136,0.08)',
                                 tension: 0.4,
                                 fill: false,
-                                pointRadius: skriningArr.map(v => v == null ? 0 : 4),
+                                pointRadius: skriningArr.map(v => v == null ? 0 : 5),
                                 pointBackgroundColor: '#0d9488',
                                 spanGaps: false,
                                 borderWidth: 2.5,
