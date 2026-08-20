@@ -98,13 +98,18 @@
         .nav-logo-icon {
             width: 42px;
             height: 42px;
-            background: var(--gradient-1);
             border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-size: 20px;
+            flex-shrink: 0;
+            box-shadow: 0 4px 14px rgba(13,148,136,0.35);
+            overflow: hidden;
+            background: transparent;
+        }
+        .nav-logo-icon svg {
+            width: 42px;
+            height: 42px;
         }
 
         .nav-logo span {
@@ -2594,7 +2599,22 @@
         <div class="nav-container">
             <a href="#" class="nav-logo">
                 <div class="nav-logo-icon">
-                    <i class="fas fa-shield-heart"></i>
+                    <svg viewBox="0 0 42 42" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="lg1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#0d9488"/>
+                                <stop offset="100%" stop-color="#06b6d4"/>
+                            </linearGradient>
+                        </defs>
+                        <!-- Background rounded square -->
+                        <rect width="42" height="42" rx="12" fill="url(#lg1)"/>
+                        <!-- Highlight gloss top -->
+                        <rect width="42" height="21" rx="12" fill="rgba(255,255,255,0.08)"/>
+                        <!-- Shield shape -->
+                        <path d="M21 7 L31 11 L31 20 C31 26 26 31 21 34 C16 31 11 26 11 20 L11 11 Z" fill="rgba(255,255,255,0.18)" stroke="rgba(255,255,255,0.5)" stroke-width="1"/>
+                        <!-- Leaf/heart inside shield -->
+                        <path d="M21 27 C21 27 14.5 22 14.5 17.5 C14.5 15 16.5 13 19 13.5 C19.8 13.7 20.5 14.1 21 14.8 C21.5 14.1 22.2 13.7 23 13.5 C25.5 13 27.5 15 27.5 17.5 C27.5 22 21 27 21 27Z" fill="white"/>
+                    </svg>
                 </div>
                 <span>HIFZ NAFS</span>
             </a>
@@ -3299,7 +3319,18 @@
                 <div class="footer-brand">
                     <a href="#" class="nav-logo">
                         <div class="nav-logo-icon">
-                            <i class="fas fa-heart-pulse"></i>
+                            <svg viewBox="0 0 42 42" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="lg2" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#0d9488"/>
+                                        <stop offset="100%" stop-color="#06b6d4"/>
+                                    </linearGradient>
+                                </defs>
+                                <rect width="42" height="42" rx="12" fill="url(#lg2)"/>
+                                <rect width="42" height="21" rx="12" fill="rgba(255,255,255,0.08)"/>
+                                <path d="M21 7 L31 11 L31 20 C31 26 26 31 21 34 C16 31 11 26 11 20 L11 11 Z" fill="rgba(255,255,255,0.18)" stroke="rgba(255,255,255,0.5)" stroke-width="1"/>
+                                <path d="M21 27 C21 27 14.5 22 14.5 17.5 C14.5 15 16.5 13 19 13.5 C19.8 13.7 20.5 14.1 21 14.8 C21.5 14.1 22.2 13.7 23 13.5 C25.5 13 27.5 15 27.5 17.5 C27.5 22 21 27 21 27Z" fill="white"/>
+                            </svg>
                         </div>
                         <span>HIFZ NAFS</span>
                     </a>
@@ -4059,8 +4090,8 @@
 
             // ===== SKRINING KESEHATAN MENTAL =====
             // Instrumen 10 item, skala Likert 1–7
-            // Item positif (1,2,3,8,9): skor = nilai pilihan langsung (SS=1 … STS=7)
-            // Item negatif (4,5,6,7,10): reverse scoring (SS=7 … STS=1)
+            // Item positif (1,2,3,8,9): reverse:false → skor = 8-rawVal (SS=7, STS=1) → skor tinggi = BAIK
+            // Item negatif (4,5,6,7,10): reverse:true  → skor = rawVal  (SS=1, STS=7) → skor tinggi = BAIK
             const SKRINING_QUESTIONS = [
                 {
                     id: 'q1',
@@ -4145,6 +4176,7 @@
             ];
 
             // Pilihan Likert 1–7 (urutan dari Sangat Setuju ke Sangat Tidak Setuju)
+            // val = nilai mentah pilihan (1=SS, 7=STS)
             const LIKERT_OPTIONS = [
                 { val: 1, text: 'Sangat Setuju',       color: '#10b981' },
                 { val: 2, text: 'Setuju',               color: '#34d399' },
@@ -4155,9 +4187,12 @@
                 { val: 7, text: 'Sangat Tidak Setuju',  color: '#dc2626' }
             ];
 
-            // Fungsi reverse scoring: nilai pilihan (1–7) → skor aktual
+            // Fungsi scoring:
+            // Item POSITIF (reverse:false): SS=7 (baik), STS=1 (buruk) → skor = 8 - rawVal
+            // Item NEGATIF (reverse:true):  SS=1 (buruk), STS=7 (baik) → skor = rawVal
+            // Dengan demikian skor tinggi = kondisi mental lebih baik
             function skriningScore(rawVal, isReverse) {
-                return isReverse ? (8 - rawVal) : rawVal;
+                return isReverse ? rawVal : (8 - rawVal);
             }
 
             // Kategori berdasarkan total skor 10–70
@@ -7549,8 +7584,10 @@
                 const s = STATUS[statusKey];
                 document.getElementById('alertStatusBanner').innerHTML = `
                     <div style="background:${s.bg};border:1.5px solid ${s.border};border-radius:20px;padding:22px 24px;display:flex;gap:18px;align-items:flex-start;">
-                        <div style="width:52px;height:52px;border-radius:16px;background:${s.color};display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 6px 18px ${s.border};">
-                            <i class="${s.icon}" style="color:#fff;font-size:1.25rem;"></i>
+                        <div style="width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,${s.color} 0%,${s.color}cc 100%);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 6px 18px ${s.border},0 2px 6px rgba(0,0,0,0.08);position:relative;overflow:hidden;">
+                            <div style="position:absolute;top:-8px;right:-8px;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.15);"></div>
+                            <div style="position:absolute;bottom:-6px;left:-6px;width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,0.1);"></div>
+                            <i class="${s.icon}" style="color:#fff;font-size:1.3rem;position:relative;z-index:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,0.2));"></i>
                         </div>
                         <div style="flex:1;min-width:0;">
                             <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap;">
