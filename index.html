@@ -4332,9 +4332,9 @@
 
                 // Simpan hasil skrining ke Supabase jika sudah login
                 try {
-                    const { data: { session } } = await _sb.auth.getSession();
-                    if (session) {
-                        const uid = session.user.id;
+                    const { data: { user } } = await window._sb.auth.getUser();
+                    if (user) {
+                        const uid = user.id;
                         // Simpan: tanggal, jawaban raw, skor per item, total skor, kategori
                         const detail = {};
                         SKRINING_QUESTIONS.forEach(q => {
@@ -4344,7 +4344,7 @@
                                 reverse: q.reverse
                             };
                         });
-                        await _sb.from('hn_skrining_results').insert({
+                        await window._sb.from('hn_skrining_results').insert({
                             user_id: uid,
                             skor: totalScore,
                             kategori: cat.label,
@@ -4414,12 +4414,12 @@
                 renderJournalList();
                 // Simpan ke Supabase jika sudah login
                 try {
-                    const { data: { session } } = await _sb.auth.getSession();
-                    if (session) {
-                        const uid = session.user.id;
+                    const { data: { user } } = await window._sb.auth.getUser();
+                    if (user) {
+                        const uid = user.id;
                         const isi = [rasakan, terjadi, pikirkan, lakukan].filter(Boolean).join('\n---\n');
                         const judul = rasakan ? rasakan.substring(0, 80) : (terjadi ? terjadi.substring(0, 80) : 'Jurnal');
-                        await _sb.from('hn_journal_entries').insert({
+                        await window._sb.from('hn_journal_entries').insert({
                             user_id: uid,
                             type: 'jurnal',
                             judul,
@@ -4472,11 +4472,11 @@
                 setTimeout(() => document.getElementById('saveMsg').textContent = '', 3000);
                 // Simpan ke Supabase jika sudah login
                 try {
-                    const { data: { session } } = await _sb.auth.getSession();
-                    if (session) {
-                        const uid = session.user.id;
+                    const { data: { user } } = await window._sb.auth.getUser();
+                    if (user) {
+                        const uid = user.id;
                         const moodLabel = MOOD_LABELS[selectedMoodVal] || '';
-                        await _sb.from('hifz_check_entries').insert({
+                        await window._sb.from('hifz_check_entries').insert({
                             user_id: uid,
                             mood: moodLabel,
                             score: selectedMoodVal,
@@ -4522,10 +4522,10 @@
                 renderRefleksiList();
                 // Simpan ke Supabase jika sudah login
                 try {
-                    const { data: { session } } = await _sb.auth.getSession();
-                    if (session) {
-                        const uid = session.user.id;
-                        await _sb.from('hn_journal_entries').insert({
+                    const { data: { user } } = await window._sb.auth.getUser();
+                    if (user) {
+                        const uid = user.id;
+                        await window._sb.from('hn_journal_entries').insert({
                             user_id: uid,
                             type: 'refleksi',
                             judul: text.substring(0, 80),
@@ -5699,25 +5699,29 @@
 
             _authBtnLoading('registerBtn', true);
             try {
-                const { data, error } = await _sb.auth.signUp({
+                const { data, error } = await window._sb.auth.signUp({
                     email, password: pass,
                     options: { data: { nama } }
                 });
                 if (error) throw error;
-                // Berhasil — trigger handle_new_hn_user di DB otomatis insert hn_profiles
-                closeAuthModal();
-                _authToast(`Selamat datang, ${nama}! 🎉`, 'success');
                 _authFailCount = 0;
                 // bersihkan form
                 ['regNama','regEmail','regPass'].forEach(id => {
                     const el = document.getElementById(id);
                     if (el) el.value = '';
                 });
-                // Refresh halaman aktif agar navbar langsung terupdate
-                setTimeout(function() {
-                    var cur = window._lastPage || 'beranda';
-                    if (typeof navigateTo === 'function') navigateTo(cur, true);
-                }, 150);
+                if (data.session) {
+                    // Email confirmation dinonaktifkan — langsung login
+                    closeAuthModal();
+                    _authToast(`Selamat datang, ${nama}! 🎉`, 'success');
+                    setTimeout(function() {
+                        var cur = window._lastPage || 'beranda';
+                        if (typeof navigateTo === 'function') navigateTo(cur, true);
+                    }, 150);
+                } else {
+                    // Email confirmation aktif — session belum tersedia sampai email dikonfirmasi
+                    _showAuthError('Pendaftaran berhasil! Cek email kamu untuk konfirmasi akun, lalu login.');
+                }
             } catch (err) {
                 _authFailCount++;
                 let msg = err.message || 'Gagal mendaftar. Coba lagi.';
@@ -5746,12 +5750,12 @@
 
             _authBtnLoading('loginBtn', true);
             try {
-                const { data, error } = await _sb.auth.signInWithPassword({ email, password: pass });
+                const { data, error } = await window._sb.auth.signInWithPassword({ email, password: pass });
                 if (error) throw error;
                 closeAuthModal();
-                // Ambil nama dari hn_profiles
-                const uid = data.user.id;
-                const { data: prof } = await _sb.from('hn_profiles').select('nama').eq('id', uid).maybeSingle();
+                // Ambil uid dari session yang baru dibuat (bukan dari localStorage)
+                const uid = data.session.user.id;
+                const { data: prof } = await window._sb.from('hn_profiles').select('nama').eq('id', uid).maybeSingle();
                 const nama = prof?.nama || data.user.user_metadata?.nama || email.split('@')[0];
                 _authToast(`Halo, ${nama}! Selamat datang kembali 👋`, 'success');
                 _authFailCount = 0;
@@ -5779,7 +5783,7 @@
 
         // ── LOGOUT ──
         async function doLogout() {
-            await _sb.auth.signOut();
+            await window._sb.auth.signOut();
             _authToast('Kamu telah keluar. Sampai jumpa! 👋', 'success');
         }
 
