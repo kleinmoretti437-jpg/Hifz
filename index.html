@@ -4479,8 +4479,10 @@
                         await window._sb.from('hifz_check_entries').insert({
                             user_id: uid,
                             mood: moodLabel,
-                            score: selectedMoodVal,
-                            catatan: null
+                            stress: selectedMoodVal,
+                            hopelessness: selectedMoodVal,
+                            withdraw: selectedMoodVal,
+                            note: null
                         });
                         _authToast('☁️ Mood tersimpan ke cloud', 'success');
                         if (window.refreshDashboard) window.refreshDashboard();
@@ -4527,10 +4529,8 @@
                         const uid = user.id;
                         await window._sb.from('hn_journal_entries').insert({
                             user_id: uid,
-                            type: 'refleksi',
-                            judul: text.substring(0, 80),
-                            isi: text,
-                            tags: tag ? [tag] : []
+                            refleksi_text: text,
+                            refleksi_tag: tag || 'Umum'
                         });
                         _authToast('☁️ Refleksi tersimpan ke cloud', 'success');
                         if (window.refreshDashboard) window.refreshDashboard();
@@ -5855,7 +5855,6 @@
                 const { data, error } = await _sb.from('hn_journal_entries')
                     .select('*')
                     .eq('user_id', uid)
-                    .eq('type', 'refleksi')
                     .order('created_at', { ascending: false });
                 if (error) throw error;
                 if (data) {
@@ -5865,8 +5864,8 @@
                             id: e.id,
                             date: d.toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long'}) + ', ' + d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}),
                             emoji: '📝',
-                            tag: (e.tags && e.tags[0]) || 'Umum',
-                            text: e.isi || '',
+                            tag: e.refleksi_tag || 'Umum',
+                            text: e.refleksi_text || '',
                             _cloud: true
                         };
                     });
