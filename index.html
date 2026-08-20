@@ -4346,9 +4346,9 @@
                         });
                         await window._sb.from('hn_skrining_results').insert({
                             user_id: uid,
-                            skor: totalScore,
-                            kategori: cat.label,
-                            detail
+                            answers: detail,
+                            total_score: totalScore,
+                            kategori: cat.label
                         });
                         _authToast('☁️ Hasil skrining tersimpan ke cloud', 'success');
                         if (window.refreshDashboard) window.refreshDashboard();
@@ -5894,7 +5894,7 @@
                 if (last) {
                     // Simpan ke window untuk keperluan dashboard
                     window._hn_lastSkrining = last;
-                    console.log('[HN] loadSkriningHistory: skor', last.skor, '|', last.kategori);
+                    console.log('[HN] loadSkriningHistory: skor', last.total_score, '|', last.kategori);
                 }
             } catch (err) {
                 console.warn('[HN] loadSkriningHistory:', err);
