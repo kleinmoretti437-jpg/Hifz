@@ -7664,6 +7664,19 @@
                                 <div id="alertPatternBadges" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
                             </div>
 
+                            <!-- ── HIFZ ALERT TEST MODE: UI ONLY, TIDAK MENULIS KE SUPABASE ── -->
+                            <div id="alertSimulationPanel" style="margin:0 28px 14px;padding:12px 14px;border-radius:12px;border:1px dashed rgba(99,102,241,0.22);background:rgba(99,102,241,0.035);display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                                <label style="display:flex;align-items:center;gap:7px;font-size:0.72rem;color:var(--text-gray);font-weight:600;cursor:pointer;">
+                                    <input id="alertSimulationToggle" type="checkbox" style="accent-color:#6366f1;">
+                                    Mode Simulasi
+                                </label>
+                                <label style="display:flex;align-items:center;gap:7px;font-size:0.72rem;color:var(--text-gray);">
+                                    Tanggal simulasi
+                                    <input id="alertSimulationDate" type="date" disabled style="border:1px solid rgba(99,102,241,0.18);border-radius:8px;padding:5px 8px;font-family:'Poppins',sans-serif;font-size:0.7rem;color:#6366f1;background:white;">
+                                </label>
+                                <span id="alertSimulationHint" style="font-size:0.66rem;color:#94a3b8;">Testing tampilan grafik saja · tidak mengubah Supabase.</span>
+                            </div>
+
                             <!-- ── GRAFIK TREN ── -->
                             <div id="alertChartWrap" style="padding:24px 28px;">
                                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
@@ -7739,6 +7752,33 @@
 
             /* ── chart instance holder ── */
             let alertChart = null;
+            let alertSimulationDate = null;
+
+            function getAlertReferenceDate() {
+                if (alertSimulationDate) {
+                    const d = new Date(alertSimulationDate + 'T12:00:00');
+                    if (!Number.isNaN(d.getTime())) return d;
+                }
+                return new Date();
+            }
+
+            function setupAlertSimulation() {
+                const toggle = document.getElementById('alertSimulationToggle');
+                const dateInput = document.getElementById('alertSimulationDate');
+                if (!toggle || !dateInput || toggle.dataset.ready === '1') return;
+                toggle.dataset.ready = '1';
+                dateInput.value = localDateKey(new Date());
+                toggle.addEventListener('change', async function() {
+                    dateInput.disabled = !this.checked;
+                    alertSimulationDate = this.checked ? dateInput.value : null;
+                    await window.alertInit();
+                });
+                dateInput.addEventListener('change', async function() {
+                    if (!toggle.checked) return;
+                    alertSimulationDate = this.value || null;
+                    await window.alertInit();
+                });
+            }
 
             /* ── Fetch real HIFZ Alert data from Supabase ── */
             async function fetchData(days) {
@@ -7748,7 +7788,7 @@
                     if (!session || !session.user) return { mood: [], skrining: [] };
 
                     const uid = session.user.id;
-                    const now = new Date();
+                    const now = getAlertReferenceDate();
                     const start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - (days - 1));
                     const end = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
 
@@ -7810,36 +7850,46 @@
                 return { moodByDate, skriningByDate };
             }
 
-            /* ── Pattern Detection Engine ── */
-            function detectPatterns(rows) {
-                if (!rows || rows.length < 3) return { score: 0, patterns: [] };
-
-                // Use last 7 rows max for pattern check
-                const recent = rows.slice(-7);
-
+            /* ── Pattern Detection Engine: mood + hasil skrining real user ── */
+            function detectPatterns(data) {
+                const moodRows = Array.isArray(data?.mood) ? data.mood : [];
+                const skriningRows = Array.isArray(data?.skrining) ? data.skrining : [];
                 const patterns = [];
                 let score = 0; // higher = more alert needed
 
-                // 1. Mood decline
-                const moods = recent.map(r => Number(r.mood || 3));
-                const moodSlope = linSlope(moods);
-                if (moodSlope < -0.3) {
-                    patterns.push({ label: 'Penurunan Mood', icon: 'fas fa-face-frown', color: '#ef4444', desc: 'Mood cenderung menurun dalam beberapa hari terakhir.' });
-                    score += moodSlope < -0.6 ? 2 : 1;
+                // 1. Mood decline — hanya dari data mood user yang sedang login.
+                const recentMood = moodRows.slice(-7).filter(r => r && r.mood != null);
+                if (recentMood.length >= 2) {
+                    const moods = recentMood.map(r => Number(r.mood));
+                    const moodSlope = linSlope(moods);
+                    if (moodSlope < -0.3) {
+                        patterns.push({ label: 'Penurunan Mood', icon: 'fas fa-face-frown', color: '#ef4444', desc: 'Mood cenderung menurun dalam beberapa hari terakhir.' });
+                        score += moodSlope < -0.6 ? 2 : 1;
+                    }
                 }
 
-                // 2. Mental health decline — dihitung dari stress, hopelessness, withdraw
-                const mental = recent.map(r => { const s=Number(r.stress||3),h=Number(r.hopelessness||3),w=Number(r.withdraw||3); return Math.round((6-((s+h+w)/3))*10)/10; });
+                // 2. Skrining — skor 10–70; makin rendah berarti kondisi yang perlu lebih diperhatikan.
+                const recentSkrining = skriningRows
+                    .filter(r => r && r.total_score != null)
+                    .slice(-3);
+                if (recentSkrining.length) {
+                    const latestScore = Number(recentSkrining[recentSkrining.length - 1].total_score);
+                    if (latestScore <= 30) {
+                        patterns.push({ label: 'Hasil Skrining Rendah', icon: 'fas fa-brain', color: '#ef4444', desc: 'Hasil skrining terakhir berada pada kategori rendah dan perlu diperhatikan.' });
+                        score += 2;
+                    } else if (latestScore <= 50) {
+                        patterns.push({ label: 'Hasil Skrining Sedang', icon: 'fas fa-brain', color: '#f59e0b', desc: 'Hasil skrining terakhir berada pada kategori sedang dan perlu dipantau.' });
+                        score += 1;
+                    }
 
-
-                const mentalSlope = linSlope(mental);
-                const avgMental = mental.reduce((a,b) => a+b, 0) / mental.length;
-                if (mentalSlope < -0.3) {
-                    patterns.push({ label: 'Kesehatan Mental Menurun', icon: 'fas fa-brain', color: '#0d9488', desc: 'Kondisi kesehatan mental menunjukkan tren menurun yang perlu diperhatikan.' });
-                    score += mentalSlope < -0.6 ? 2 : 1;
-                } else if (avgMental <= 2) {
-                    patterns.push({ label: 'Kesehatan Mental Rendah', icon: 'fas fa-brain', color: '#0d9488', desc: 'Rata-rata kesehatan mental berada di zona yang memerlukan perhatian.' });
-                    score += avgMental <= 1.5 ? 2 : 1;
+                    if (recentSkrining.length >= 2) {
+                        const skriningScores = recentSkrining.map(r => Number(r.total_score));
+                        const skriningSlope = linSlope(skriningScores);
+                        if (skriningSlope < -3) {
+                            patterns.push({ label: 'Skor Skrining Menurun', icon: 'fas fa-chart-line', color: '#0d9488', desc: 'Skor skrining menunjukkan kecenderungan menurun pada hasil-hasil terakhir.' });
+                            score += skriningSlope < -6 ? 2 : 1;
+                        }
+                    }
                 }
 
                 return { score, patterns };
@@ -7978,7 +8028,7 @@
                 if (alertChart) { alertChart.destroy(); alertChart = null; }
 
                 const { moodByDate, skriningByDate } = normalizeAlertData(data);
-                const today = new Date();
+                const today = getAlertReferenceDate();
                 const labels = [], moodArr = [], skriningArr = [];
 
                 for (let i = days - 1; i >= 0; i--) {
@@ -8099,6 +8149,7 @@
                 document.getElementById('alertNoData').style.display = 'none';
                 document.getElementById('alertDashboard').style.display = 'none';
                 ensureAlertRangeToggle();
+                setupAlertSimulation();
 
                 const days = Number(window._hifzAlertRange || 14);
                 const data = await fetchData(days);
@@ -8114,12 +8165,8 @@
 
                 document.getElementById('alertDashboard').style.display = 'block';
 
-                // Status/pola tetap memakai data real mood yang sudah ada; tidak ada data simulasi.
-                const patternRows = (data.mood || []).map(r => ({
-                    created_at: r.created_at,
-                    mood: r.mood
-                }));
-                const { score, patterns } = detectPatterns(patternRows);
+                // Status/pola memakai data real mood + skrining dari user yang sedang login.
+                const { score, patterns } = detectPatterns(data);
                 const statusKey = getStatus(score);
 
                 renderStatus(statusKey);
@@ -8128,8 +8175,12 @@
                 renderActions(statusKey);
 
                 const now = new Date();
+                const refDate = getAlertReferenceDate();
                 document.getElementById('alertTimestamp').textContent =
                     `Diperbarui: ${now.toLocaleDateString('id-ID', {day:'numeric',month:'long',year:'numeric'})} pukul ${now.toLocaleTimeString('id-ID', {hour:'2-digit',minute:'2-digit'})}`;
+                if (alertSimulationDate) {
+                    document.getElementById('alertTimestamp').textContent += ` · Simulasi: ${refDate.toLocaleDateString('id-ID', {day:'numeric',month:'long',year:'numeric'})}`;
+                }
 
                 applyAlertMode();
             };
