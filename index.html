@@ -1081,13 +1081,16 @@
             top: 70px;
             left: 0;
             width: 100%;
+            max-height: calc(100vh - 70px);
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
             background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(20px);
-            padding: 30px;
+            padding: 14px 20px 24px;
             box-shadow: var(--shadow-md);
             z-index: 999;
             flex-direction: column;
-            gap: 20px;
+            gap: 0;
             transform: translateY(-110%);
             transition: transform 0.4s ease;
         }
@@ -1100,14 +1103,35 @@
             text-decoration: none;
             color: var(--text-dark);
             font-weight: 500;
-            font-size: 1.1rem;
-            padding: 12px 0;
+            font-size: 0.92rem;
+            padding: 10px 0;
             border-bottom: 1px solid rgba(0,0,0,0.05);
             transition: color 0.3s ease;
+            display: block;
         }
 
+        .mobile-nav a.mobile-sub {
+            font-size: 0.82rem;
+            padding: 7px 0 7px 14px;
+            color: var(--text-gray);
+            font-weight: 400;
+        }
+
+        .mobile-nav a.mobile-sub:hover,
         .mobile-nav a:hover {
             color: var(--primary);
+        }
+
+        .mobile-nav .mnav-label {
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-light);
+            padding: 12px 0 2px;
+            display: block;
+            pointer-events: none;
+            border-bottom: none;
         }
 
         /* ===== SCROLL ANIMATIONS ===== */
@@ -2109,15 +2133,26 @@
             .subfeat-grid { grid-template-columns: 1fr 1fr; }
             .challenge-cards { grid-template-columns: 1fr 1fr; }
             .edu-grid { grid-template-columns: 1fr 1fr; }
-            .mood-checkin { grid-template-columns: 1fr; }
+            .mood-checkin { grid-template-columns: 1fr; gap: 16px; }
         }
 
         @media (max-width: 600px) {
-            .subfeat-grid { grid-template-columns: 1fr; }
-            .fd-header { flex-direction: column; align-items: flex-start; gap: 12px; }
-            .fd-header-text h2 { font-size: 1.5rem; }
+            .subfeat-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+            .fd-header { flex-direction: row; align-items: center; gap: 12px; margin-bottom: 20px; }
+            .fd-header-icon { width: 44px; height: 44px; border-radius: 13px; font-size: 18px; flex-shrink: 0; box-shadow: 0 4px 12px rgba(13,148,136,0.2); }
+            .fd-header-text .fd-label { font-size: 0.62rem; letter-spacing: 1.5px; margin-bottom: 2px; }
+            .fd-header-text h2 { font-size: 1.1rem; font-weight: 800; margin-bottom: 3px; line-height: 1.2; }
+            .fd-header-text p { font-size: 0.75rem; line-height: 1.5; max-width: 100%; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+            .feature-detail { padding: 14px 14px 40px; }
+            .subfeat-card { padding: 14px 12px; }
+            .subfeat-icon { width: 36px; height: 36px; border-radius: 10px; font-size: 15px; margin-bottom: 10px; }
+            .subfeat-card h3 { font-size: 0.82rem; margin-bottom: 6px; }
+            .subfeat-card p { font-size: 0.72rem; line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
             .challenge-cards { grid-template-columns: 1fr; }
             .edu-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 400px) {
+            .subfeat-grid { grid-template-columns: 1fr; }
         }
 
         /* Loading animation */
@@ -2585,17 +2620,73 @@
 
     <!-- Mobile Nav -->
     <div class="mobile-nav" id="mobileNav">
-        <a href="#" onclick="navigateTo('beranda'); closeMobileNav();">Beranda</a>
-        <a href="#" onclick="navigateTo('page-tentang'); closeMobileNav();">Tentang</a>
-        <a href="#" onclick="navigateTo('fitur'); closeMobileNav();" style="color:var(--primary);font-weight:700;">⚡ Semua Fitur</a>
-        <a href="#" onclick="navigateTo('fitur-b'); closeMobileNav();">&nbsp;&nbsp;↳ HIFZ Check</a>
-        <a href="#" onclick="navigateTo('fitur-alert'); closeMobileNav();">&nbsp;&nbsp;↳ HIFZ Alert</a>
-        <a href="#" onclick="navigateTo('fitur-d'); closeMobileNav();">&nbsp;&nbsp;↳ HIFZ Edu</a>
-        <a href="#" onclick="navigateTo('fitur-ruh'); closeMobileNav();">&nbsp;&nbsp;↳ HIFZ Ruh</a>
-        <a href="#" onclick="navigateTo('fitur-a'); closeMobileNav();">&nbsp;&nbsp;↳ HIFZ Support</a>
-        <a href="#" onclick="navigateTo('dashboard'); closeMobileNav();" style="color:var(--primary);font-weight:700;">📊 Dashboard</a>
-        <a href="#" onclick="openAuthModal('register'); closeMobileNav(); return false;">Daftar / Masuk</a>
+        <span class="mnav-label">Menu</span>
+        <a href="#" onclick="navigateTo('beranda'); closeMobileNav();"><i class="fas fa-house" style="width:18px;color:var(--primary);margin-right:8px;"></i>Beranda</a>
+        <a href="#" onclick="navigateTo('page-tentang'); closeMobileNav();"><i class="fas fa-circle-info" style="width:18px;color:var(--primary);margin-right:8px;"></i>Tentang</a>
+        <a href="#" onclick="navigateTo('dashboard'); closeMobileNav();"><i class="fas fa-list-check" style="width:18px;color:var(--primary);margin-right:8px;"></i>Cara Kerja</a>
+        <a href="#" onclick="navigateTo('kontak'); closeMobileNav();"><i class="fas fa-envelope" style="width:18px;color:var(--primary);margin-right:8px;"></i>Kontak</a>
+        <span class="mnav-label">Fitur</span>
+        <a href="#" onclick="navigateTo('fitur'); closeMobileNav(); return false;" style="display:flex;align-items:center;justify-content:space-between;color:var(--primary);font-weight:600;">
+            <span><i class="fas fa-layer-group" style="width:18px;margin-right:8px;"></i>Semua Fitur</span>
+            <i class="fas fa-chevron-right" style="font-size:0.75rem;opacity:0.6;"></i>
+        </a>
+        <span class="mnav-label">Akun</span>
+        <a href="#" onclick="closeMobileNav(); setTimeout(function(){ openAuthModal('register'); }, 420); return false;" style="color:var(--primary);font-weight:600;"><i class="fas fa-user-plus" style="width:18px;margin-right:8px;"></i>Daftar / Masuk</a>
     </div>
+    <!-- Mobile Fitur Bottom Sheet -->
+    <div id="mobileFiturOverlay" onclick="closeMobileFiturSheet()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:1100;backdrop-filter:blur(4px);opacity:0;transition:opacity 0.3s ease;"></div>
+    <div id="mobileFiturSheet" style="display:none;position:fixed;bottom:0;left:0;width:100%;z-index:1101;background:white;border-radius:24px 24px 0 0;padding:0 0 env(safe-area-inset-bottom,16px);box-shadow:0 -8px 40px rgba(13,148,136,0.18);transform:translateY(100%);transition:transform 0.38s cubic-bezier(0.32,0.72,0,1);">
+        <!-- Handle bar -->
+        <div style="display:flex;justify-content:center;padding:12px 0 0;">
+            <div style="width:40px;height:4px;background:#e2e8f0;border-radius:4px;"></div>
+        </div>
+        <!-- Header -->
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;">
+            <div>
+                <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-light);margin-bottom:2px;">HIFZ NAFS</div>
+                <div style="font-size:1rem;font-weight:800;color:var(--text-dark);">Pilih Fitur</div>
+            </div>
+            <button onclick="closeMobileFiturSheet()" style="width:32px;height:32px;border-radius:50%;border:none;background:#f1f5f9;color:var(--text-gray);font-size:0.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:'Poppins',sans-serif;">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <!-- Feature grid -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:4px 16px 20px;">
+            <button onclick="closeMobileFiturSheet();navigateTo('fitur-b');" class="mfs-btn" style="background:linear-gradient(135deg,rgba(13,148,136,0.07),rgba(6,182,212,0.07));border:1.5px solid rgba(13,148,136,0.15);border-radius:16px;padding:16px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;font-family:'Poppins',sans-serif;text-align:left;transition:all 0.2s ease;">
+                <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#0d9488,#06b6d4);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <i class="fas fa-clipboard-check" style="color:white;font-size:0.9rem;"></i>
+                </div>
+                <span style="font-size:0.8rem;font-weight:700;color:var(--text-dark);line-height:1.3;">HIFZ<br>Check</span>
+            </button>
+            <button onclick="closeMobileFiturSheet();navigateTo('fitur-alert');" class="mfs-btn" style="background:linear-gradient(135deg,rgba(239,68,68,0.07),rgba(249,115,22,0.07));border:1.5px solid rgba(239,68,68,0.15);border-radius:16px;padding:16px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;font-family:'Poppins',sans-serif;text-align:left;transition:all 0.2s ease;">
+                <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#ef4444,#f97316);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <i class="fas fa-bell" style="color:white;font-size:0.9rem;"></i>
+                </div>
+                <span style="font-size:0.8rem;font-weight:700;color:var(--text-dark);line-height:1.3;">HIFZ<br>Alert</span>
+            </button>
+            <button onclick="closeMobileFiturSheet();navigateTo('fitur-d');" class="mfs-btn" style="background:linear-gradient(135deg,rgba(245,158,11,0.07),rgba(249,115,22,0.07));border:1.5px solid rgba(245,158,11,0.15);border-radius:16px;padding:16px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;font-family:'Poppins',sans-serif;text-align:left;transition:all 0.2s ease;">
+                <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#f59e0b,#f97316);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <i class="fas fa-book-open" style="color:white;font-size:0.9rem;"></i>
+                </div>
+                <span style="font-size:0.8rem;font-weight:700;color:var(--text-dark);line-height:1.3;">HIFZ<br>Edu</span>
+            </button>
+            <button onclick="closeMobileFiturSheet();navigateTo('fitur-ruh');" class="mfs-btn" style="background:linear-gradient(135deg,rgba(139,92,246,0.07),rgba(99,102,241,0.07));border:1.5px solid rgba(139,92,246,0.15);border-radius:16px;padding:16px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;font-family:'Poppins',sans-serif;text-align:left;transition:all 0.2s ease;">
+                <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#8b5cf6,#6366f1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <i class="fas fa-moon" style="color:white;font-size:0.9rem;"></i>
+                </div>
+                <span style="font-size:0.8rem;font-weight:700;color:var(--text-dark);line-height:1.3;">HIFZ<br>Ruh</span>
+            </button>
+            <!-- HIFZ Support spans full width as 5th item -->
+            <button onclick="closeMobileFiturSheet();navigateTo('fitur-a');" class="mfs-btn" style="grid-column:1/-1;background:linear-gradient(135deg,rgba(236,72,153,0.07),rgba(244,63,94,0.07));border:1.5px solid rgba(236,72,153,0.15);border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;font-family:'Poppins',sans-serif;text-align:left;transition:all 0.2s ease;">
+                <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#ec4899,#f43f5e);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <i class="fas fa-shield-heart" style="color:white;font-size:0.9rem;"></i>
+                </div>
+                <span style="font-size:0.8rem;font-weight:700;color:var(--text-dark);">HIFZ Support</span>
+                <i class="fas fa-chevron-right" style="margin-left:auto;font-size:0.7rem;color:var(--text-light);"></i>
+            </button>
+        </div>
+    </div>
+
     <div id="page-beranda" class="page active">
 
     <!-- Hero Section -->
@@ -2658,13 +2749,13 @@
     <section id="fitur" style="padding:90px 30px;background:#ffffff;">
         <div class="section-container">
             <div class="section-header reveal">
-                <span class="section-badge" style="font-size:0.9rem;font-weight:700;color:var(--primary);background:rgba(13,148,136,0.08);padding:8px 22px;border-radius:50px;letter-spacing:0.04em;">✦ Keunggulan</span>
+                <span class="section-badge" style="font-size:0.9rem;font-weight:700;color:var(--primary);background:rgba(13,148,136,0.08);padding:8px 22px;border-radius:50px;letter-spacing:0.04em;">Keunggulan</span>
                 <h2 style="margin-top:12px;">Mengapa HIFZ NAFS?</h2>
                 <p>Platform yang dirancang khusus untuk remaja muslim — menggabungkan ilmu psikologi modern dengan fondasi spiritual Islam.</p>
             </div>
 
             <!-- 3 Keunggulan Cards -->
-            <div class="reveal" style="display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:52px;">
+            <div class="reveal keunggulan-grid" style="margin-top:52px;">
 
                 <!-- Keunggulan 1 -->
                 <div style="background:white;border-radius:24px;padding:36px 32px;text-align:center;position:relative;overflow:hidden;box-shadow:0 4px 20px rgba(13,148,136,.08);border:1px solid rgba(13,148,136,.07);transition:transform .3s,box-shadow .3s;" onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 20px 50px rgba(13,148,136,.14)'" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 20px rgba(13,148,136,.08)'">
@@ -2682,10 +2773,10 @@
                 </div>
 
                 <!-- Keunggulan 2 (center, menonjol dengan border teal) -->
-                <div style="background:white;border-radius:24px;padding:36px 32px;text-align:center;position:relative;overflow:hidden;box-shadow:0 8px 36px rgba(13,148,136,.18);border:2px solid #0d9488;transform:scale(1.04);transition:transform .3s,box-shadow .3s;" onmouseover="this.style.transform='scale(1.04) translateY(-6px)';this.style.boxShadow='0 20px 56px rgba(13,148,136,.28)'" onmouseout="this.style.transform='scale(1.04)';this.style.boxShadow='0 8px 36px rgba(13,148,136,.18)'">
+                <div class="keunggulan-center" style="background:white;border-radius:24px;padding:36px 32px;text-align:center;position:relative;overflow:hidden;box-shadow:0 8px 36px rgba(13,148,136,.18);border:2px solid #0d9488;transform:scale(1.04);transition:transform .3s,box-shadow .3s;" onmouseover="this.style.transform='scale(1.04) translateY(-6px)';this.style.boxShadow='0 20px 56px rgba(13,148,136,.28)'" onmouseout="this.style.transform='scale(1.04)';this.style.boxShadow='0 8px 36px rgba(13,148,136,.18)'">
                     <div style="position:absolute;top:0;left:0;width:100%;height:4px;background:linear-gradient(90deg,#0d9488,#5eead4);"></div>
                     <!-- Badge "Unggulan" -->
-                    <div style="position:absolute;top:18px;right:18px;background:linear-gradient(135deg,#0d9488,#06b6d4);color:white;font-size:0.62rem;font-weight:800;padding:4px 12px;border-radius:50px;letter-spacing:.08em;text-transform:uppercase;">★ Unggulan</div>
+                    <div style="position:absolute;top:18px;right:18px;background:linear-gradient(135deg,#0d9488,#06b6d4);color:white;font-size:0.62rem;font-weight:800;padding:4px 12px;border-radius:50px;letter-spacing:.08em;text-transform:uppercase;display:flex;align-items:center;gap:4px;"><i class="fas fa-star" style="font-size:0.55rem;"></i> Unggulan</div>
                     <!-- Logo -->
                     <div style="width:68px;height:68px;margin:0 auto 20px;background:linear-gradient(135deg,#0d9488,#06b6d4);border-radius:22px;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(13,148,136,.30);">
                         <i class="fas fa-moon" style="font-size:1.9rem;color:white;"></i>
@@ -2728,12 +2819,432 @@
         </div>
     </section>
 
-    <!-- Responsive style for keunggulan -->
+    <!-- Responsive fixes for mobile -->
     <style>
+    /* ===== RUH PAGE — AYAT CARDS HORIZONTAL SCROLL ON MOBILE ===== */
+    .ruh-ayat-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+    .ruh-ayat-card {
+        border-radius: 24px;
+        padding: 32px 28px;
+        color: #fff;
+        position: relative;
+        overflow: hidden;
+    }
+    @media (max-width: 640px) {
+        .ruh-ayat-wrap {
+            /* horizontal scroll snap */
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            padding-bottom: 6px;
+        }
+        .ruh-ayat-wrap::-webkit-scrollbar { display: none; }
+        .ruh-ayat-grid {
+            /* side by side, each card takes ~85vw so user can peek next card */
+            grid-template-columns: 85vw 85vw;
+            gap: 14px;
+            width: max-content;
+        }
+        .ruh-ayat-card {
+            width: 85vw;
+            padding: 24px 20px;
+        }
+        .ruh-ayat-card div[style*="font-size:1.45rem"],
+        .ruh-ayat-card div[style*="font-size:1.2rem"] {
+            font-size: 1.2rem !important;
+            line-height: 1.9 !important;
+        }
+    }
+
+    /* ===== HIFZ ALERT PAGE — COMPACT PADDING ON MOBILE ===== */
+    @media (max-width: 600px) {
+        /* Status banner & inner sections: reduce padding */
+        #alertStatusBanner { padding: 16px 16px 0 !important; }
+        #alertPolaWrap     { padding: 14px 16px 0 !important; }
+        #alertChartWrap    { padding: 16px 16px !important; }
+        #alertRekomendasi  { padding: 16px 16px !important; }
+        #alertDivider1, #alertDivider2 { margin: 0 16px !important; }
+        /* Timestamp + refresh row */
+        #page-fitur-alert div[style*="padding:16px 28px 24px"] {
+            padding: 12px 16px 18px !important;
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 8px !important;
+        }
+        /* Chart height smaller on mobile */
+        #page-fitur-alert div[style*="height:210px"] {
+            height: 170px !important;
+        }
+        /* Legend row: tighten */
+        #alertChartWrap div[style*="display:flex;gap:14px"] {
+            gap: 8px !important;
+            font-size: 0.68rem !important;
+        }
+        /* Disclaimer */
+        #page-fitur-alert > section > div > div[style*="border-radius:14px"] {
+            margin-top: 14px !important;
+            padding: 12px 14px !important;
+        }
+        /* No data state */
+        #alertNoData { padding: 40px 16px !important; }
+        #alertLoading { padding: 40px 16px !important; }
+    }
+
+    /* ===== KEUNGGULAN CARDS — MOBILE FIX ===== */
+    .keunggulan-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 28px;
+    }
+    @media (max-width: 900px) {
+        .keunggulan-grid {
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-top: 28px !important;
+        }
+        /* Also catch old inline style fallback */
+        #fitur .reveal>div[style*="grid-template-columns:repeat(3"]{
+            grid-template-columns:1fr!important;
+        }
+        /* Remove scale(1.04) on center card */
+        #fitur div[style*="scale(1.04)"]{
+            transform:none!important;
+        }
+        /* Compact card padding on mobile */
+        .keunggulan-grid > div {
+            padding: 20px 18px !important;
+            border-radius: 16px !important;
+        }
+        /* Smaller icon */
+        .keunggulan-grid > div > div[style*="width:68px"] {
+            width: 48px !important;
+            height: 48px !important;
+            border-radius: 14px !important;
+            margin-bottom: 12px !important;
+        }
+        .keunggulan-grid > div > div[style*="width:68px"] i {
+            font-size: 1.4rem !important;
+        }
+        /* Compact heading */
+        .keunggulan-grid h3 {
+            font-size: 1rem !important;
+            margin-bottom: 12px !important;
+        }
+        /* Check items smaller */
+        .keunggulan-grid > div > div[style*="flex-direction:column"] > div {
+            font-size: 0.78rem !important;
+        }
+        /* Section header compact */
+        #fitur .section-header {
+            margin-bottom: 20px !important;
+        }
+        #fitur .section-header h2 {
+            font-size: 1.5rem !important;
+        }
+        #fitur .section-header p {
+            font-size: 0.88rem !important;
+        }
+        /* CTA button under cards */
+        #fitur > div > div[style*="margin-top:52px"] ~ div {
+            margin-top: 28px !important;
+        }
+    }
+
+    /* ===== AYAT AL-QUR'AN SECTION — MOBILE FIX ===== */
+    /* Two-column side-by-side → single column stacked on mobile */
+    @media(max-width:768px){
+        #statistik div[style*="grid-template-columns:1fr 1fr"]{
+            grid-template-columns:1fr!important;
+            gap:14px!important;
+        }
+        /* Make Arabic font slightly smaller on small screens */
+        #statistik p[style*="font-size:24px"]{
+            font-size:20px!important;
+        }
+        #statistik p[style*="font-size:30px"]{
+            font-size:24px!important;
+        }
+        /* Reduce padding on ayat cards */
+        #statistik div[style*="padding:26px"]{
+            padding:18px 18px 16px!important;
+        }
+        #statistik { padding:48px 16px 56px!important; }
+    }
+
+    /* ===== HERO SECTION — MOBILE FIX ===== */
+    @media(max-width:480px){
+        /* Halodoc button — wrap text properly */
+        .hero-content div[style*="margin-top:14px"] a{
+            font-size:0.82rem!important;
+            padding:11px 20px!important;
+        }
+        /* Subtitle padding */
+        .hero-content .subtitle{
+            font-size:0.88rem!important;
+        }
+    }
+
+    /* ===== FEATURE SECTIONS — MOBILE FIX ===== */
+    @media(max-width:600px){
+        /* Feature detail compact on mobile */
+        .feature-detail{
+            padding:14px 14px 40px!important;
+        }
+        .fd-preview{
+            padding:16px 14px!important;
+        }
+        /* Mood checkin: stack columns */
+        .mood-checkin{
+            grid-template-columns:1fr!important;
+            gap:16px!important;
+        }
+        /* Challenge cards & edu-grid: already handled but ensure */
+        .challenge-cards, .edu-grid{
+            grid-template-columns:1fr!important;
+        }
+        /* Badge row: wrap nicely */
+        .badge-row{
+            gap:6px!important;
+        }
+    }
+
+    /* ===== PAGE BACK BAR — MOBILE FIX ===== */
+    @media(max-width:600px){
+        .page-back-bar{
+            padding:10px 16px!important;
+            gap:8px!important;
+        }
+        .page-breadcrumb{
+            font-size:0.68rem!important;
+        }
+        /* Sub-feature nav buttons: smaller */
+        .feat-nav-btn{
+            height:28px!important;
+            padding:0 9px!important;
+            font-size:0.65rem!important;
+        }
+    }
+
+    /* ===== SUBFEAT TOP NAV — ENSURE PROPER SCROLL ===== */
+    @media(max-width:480px){
+        .subfeat-topnav{
+            justify-content:flex-start!important;
+            padding:6px 10px!important;
+        }
+        .subfeat-topbtn{
+            min-width:48px!important;
+            padding:5px 8px!important;
+            font-size:0.6rem!important;
+        }
+    }
+
+    /* ===== ABOUT & SECTION PADDING — MOBILE ===== */
+    @media(max-width:480px){
+        .about, .features, .vision{
+            padding:60px 16px!important;
+        }
+        .section-header{
+            margin-bottom:36px!important;
+        }
+        #fitur{
+            padding:60px 16px!important;
+        }
+        #statistik{
+            padding:40px 16px 52px!important;
+        }
+        /* Ayat section header divider */
+        #statistik div[style*="max-width:1200px;margin:0 auto 40px"]{
+            margin-bottom:24px!important;
+        }
+    }
+
+    /* ===== KEUNGGULAN CARDS — RESET CENTER CARD ON MOBILE ===== */
     @media(max-width:900px){
-        #fitur .reveal>div[style*="grid-template-columns:repeat(3"]{grid-template-columns:1fr!important;}
-        #fitur div[style*="scale(1.03)"]{transform:none!important;}
-        #fitur div[style*="scale(1.03)"):hover"]{transform:translateY(-6px)!important;}
+        .keunggulan-center{
+            transform:none!important;
+        }
+        .keunggulan-center:hover{
+            transform:translateY(-6px)!important;
+        }
+    }
+
+    /* ===== MOBILE FITUR SHEET BUTTON ===== */
+    .mfs-btn:active {
+        transform: scale(0.96);
+        opacity: 0.85;
+    }
+    @media (hover: hover) {
+        .mfs-btn:hover {
+            filter: brightness(0.96);
+            transform: translateY(-1px);
+        }
+    }
+
+    /* ===== GLOBAL OVERFLOW SAFETY ===== */
+    html, body {
+        overflow-x: hidden;
+        max-width: 100%;
+    }
+
+    /* Prevent any fixed-width element from causing overflow */
+    img, video, canvas, iframe {
+        max-width: 100%;
+    }
+
+    /* ===== HUB PAGE — MOBILE COMPACT ===== */
+    @media (max-width: 768px) {
+        .hub-page-wrap { padding-bottom: 48px; }
+        .hub-hero { padding: 18px 16px 12px; }
+        .hub-hero-icon { width: 44px !important; height: 44px !important; border-radius: 13px !important; font-size: 1.3rem !important; box-shadow: 0 6px 16px rgba(0,0,0,0.12) !important; }
+        .hub-hero-text h1 { font-size: 1.1rem !important; margin-bottom: 2px !important; }
+        .hub-hero-text p { display: none !important; }
+        .hub-badge { font-size: 0.6rem !important; padding: 3px 9px !important; margin-bottom: 4px !important; }
+        .hub-divider { margin: 10px auto 8px !important; }
+        .hub-sublist { padding: 0 12px !important; gap: 7px !important; }
+        .hub-subcard { padding: 11px 14px !important; gap: 12px !important; border-radius: 11px !important; }
+        .hub-subcard-icon { width: 34px !important; height: 34px !important; border-radius: 9px !important; font-size: 0.9rem !important; }
+        .hub-subcard-body h3 { font-size: 0.82rem !important; }
+        .hub-subcard-arrow { width: 22px !important; height: 22px !important; font-size: 0.65rem !important; }
+    }
+
+    /* ===== HUB & FEATURE PAGES — MOBILE PADDING ===== */
+    @media(max-width:480px){
+        .hub-page-wrap{
+            padding-bottom:60px!important;
+        }
+        .hub-hero{
+            padding:20px 14px 16px!important;
+        }
+        .hub-sublist{
+            padding:0 12px!important;
+        }
+    }
+
+    /* ===== KEUNGGULAN CTA BUTTON — MOBILE ===== */
+    @media(max-width:480px){
+        #fitur button[onclick="navigateTo('fitur')"]{
+            width:100%!important;
+            justify-content:center!important;
+            font-size:0.9rem!important;
+            padding:14px 24px!important;
+        }
+    }
+
+    /* ===== DASHBOARD SECTION EXTRA SMALL FIXES ===== */
+    @media(max-width:360px){
+        .dashboard-tab{
+            padding:5px 8px!important;
+            font-size:0.65rem!important;
+        }
+    }
+
+    /* ===== MOOD TRACKER / CHECK-JOURNAL TABS — MOBILE COMPACT ===== */
+    @media(max-width:600px){
+        /* Tab navigasi atas */
+        #moodTrackerApp > .sfnav-wrap { padding:0 !important; }
+        /* Panel padding dikurangi */
+        #panel-checkin { padding:20px 14px !important; }
+        #panel-grafik { padding:20px 14px !important; }
+        #panel-refleksi { padding:20px 14px !important; }
+        #panel-skrining #skrining-intro { padding:24px 16px !important; }
+        #panel-skrining #skrining-question { padding:20px 14px !important; }
+        #panel-skrining #skrining-result { padding:20px 14px !important; }
+        /* Streak row lebih rapat */
+        #streakRow { gap:5px !important; }
+    }
+
+    /* ===== PEER SUPPORT — MOBILE COMPACT ===== */
+    /* Tab bar scrollable & tipis */
+    @media(max-width:600px){
+        #kolaborasiApp > div:first-child button {
+            padding:10px 11px !important;
+            font-size:0.68rem !important;
+        }
+        /* Panel padding ringkas */
+        #kpanel-forum,
+        #kpanel-anonim,
+        #kpanel-group,
+        #kpanel-eksternal {
+            padding:16px 14px !important;
+        }
+        /* Kartu komunitas eksternal: sembunyikan deskripsi panjang */
+        #kpanel-eksternal .ext-org-desc { display:none !important; }
+        /* Tombol sosial lebih kecil */
+        #kpanel-eksternal a[href] {
+            padding:5px 10px !important;
+            font-size:0.67rem !important;
+        }
+    }
+
+    /* ===== HIFZ JOURNAL — MOBILE COMPACT ===== */
+    @media(max-width:600px){
+        #panel-journal {
+            padding:16px 14px 24px !important;
+        }
+        /* Sembunyikan deskripsi panduan (sudah ada di placeholder) */
+        #panel-journal .journal-hint { display:none !important; }
+        /* Label lebih kompak */
+        #panel-journal label {
+            margin-bottom:5px !important;
+            font-size:0.79rem !important;
+        }
+        /* Textarea sedikit lebih pendek di mobile */
+        #panel-journal textarea {
+            height:68px !important;
+            font-size:0.8rem !important;
+        }
+        /* Margin antar field */
+        #panel-journal .journal-field { margin-bottom:12px !important; }
+        /* Tombol simpan compact */
+        #panel-journal > button[onclick="simpanJournal()"] {
+            padding:11px 24px !important;
+            font-size:0.82rem !important;
+            margin-bottom:18px !important;
+        }
+        /* Header journal */
+        #panel-journal > div:first-child { margin-bottom:4px !important; }
+        #panel-journal > div:first-child > div:last-child p:first-child { font-size:0.9rem !important; }
+        /* Privacy note */
+        #panel-journal > p[style*="color:var(--text-light)"] { margin-bottom:14px !important; margin-top:3px !important; }
+    }
+
+    /* ===== PAGE FITUR — MOBILE COMPACT CARDS ===== */
+    @media(max-width:768px){
+        /* Sembunyikan deskripsi panjang & bullet list */
+        #page-fitur .hfcard-desc { display:none!important; }
+        #page-fitur .hfcard-bullets { display:none!important; }
+        /* Kurangi padding kartu */
+        #hifz-showcase-page [onclick] {
+            padding:18px 16px 16px!important;
+            min-height:auto!important;
+        }
+        /* Icon lebih kecil */
+        #hifz-showcase-page [onclick] > div[style*="width:68px"] {
+            width:42px!important; height:42px!important;
+            border-radius:12px!important; margin-bottom:10px!important;
+        }
+        #hifz-showcase-page [onclick] > div[style*="width:68px"] i { font-size:1rem!important; }
+        /* Badge label kecil */
+        #hifz-showcase-page span[style*="letter-spacing:.12em"] { font-size:0.6rem!important; margin-bottom:4px!important; }
+        /* Judul compact */
+        #hifz-showcase-page h2[style*="font-size:1.9rem"] { font-size:1.05rem!important; margin-bottom:8px!important; }
+        #hifz-showcase-page .u-mini-title { font-size:0.88rem!important; margin:5px 0 8px!important; }
+        /* "Buka Fitur" link compact */
+        #hifz-showcase-page div[style*="margin-top:20px;display:inline-flex"] { margin-top:8px!important; font-size:0.72rem!important; }
+        /* Tombol di card utama */
+        #hifz-showcase-page button[onclick*="navigateTo"] { padding:9px 18px!important; font-size:0.78rem!important; }
+        /* Ghost numbers kecil */
+        .u-ghost-num-lg { font-size:3rem!important; }
+        .u-ghost-num { font-size:2.5rem!important; }
+        /* Header section compact */
+        #page-fitur .section-header h2 { font-size:1.3rem!important; }
+        #page-fitur .section-header p { font-size:0.8rem!important; }
+        #page-fitur .section-header { margin-bottom:20px!important; }
+        #page-fitur > div { padding:18px 12px 60px!important; }
     }
     </style>
 <!-- Stats Section -->
@@ -3061,6 +3572,35 @@
             hamburger.classList.remove('active');
             mobileNav.classList.remove('active');
         }
+
+        // ===== MOBILE FITUR BOTTOM SHEET =====
+        window.openMobileFiturSheet = function() {
+            closeMobileNav();
+            const overlay = document.getElementById('mobileFiturOverlay');
+            const sheet = document.getElementById('mobileFiturSheet');
+            overlay.style.display = 'block';
+            sheet.style.display = 'block';
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    overlay.style.opacity = '1';
+                    sheet.style.transform = 'translateY(0)';
+                });
+            });
+            document.body.style.overflow = 'hidden';
+        };
+
+        window.closeMobileFiturSheet = function() {
+            const overlay = document.getElementById('mobileFiturOverlay');
+            const sheet = document.getElementById('mobileFiturSheet');
+            overlay.style.opacity = '0';
+            sheet.style.transform = 'translateY(100%)';
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                sheet.style.display = 'none';
+                document.body.style.overflow = '';
+            }, 380);
+        };
+
         function createMoodMiniChart() {
             const ctx = document.getElementById('moodMiniChart');
             if (!ctx) return;
@@ -4718,15 +5258,15 @@
             <div class="fd-preview" class="u-preview-wrap">
                 <div id="kolaborasiApp" class="u-ff-pop">
                     <!-- Inline Tab Bar -->
-                    <div style="display:flex;overflow-x:auto;border-bottom:1px solid rgba(13,148,136,0.12);background:white;position:sticky;top:0;z-index:10;scrollbar-width:none;">
-                        <button id="ktab-forum" onclick="kolabSwitchTab('forum')" style="flex-shrink:0;padding:14px 16px;border:none;background:none;font-family:'Poppins',sans-serif;font-size:0.75rem;font-weight:600;cursor:pointer;color:var(--primary);border-bottom:3px solid var(--primary);transition:all .25s;white-space:nowrap;"><i class="fas fa-comments" style="margin-right:5px;"></i>Forum</button>
-                        <button id="ktab-anonim" onclick="kolabSwitchTab('anonim')" style="flex-shrink:0;padding:14px 16px;border:none;background:none;font-family:'Poppins',sans-serif;font-size:0.75rem;font-weight:600;cursor:pointer;color:var(--text-gray);border-bottom:3px solid transparent;transition:all .25s;white-space:nowrap;"><i class="fas fa-mask" style="margin-right:5px;"></i>Anonim</button>
-                        <button id="ktab-group" onclick="kolabSwitchTab('group')" style="flex-shrink:0;padding:14px 16px;border:none;background:none;font-family:'Poppins',sans-serif;font-size:0.75rem;font-weight:600;cursor:pointer;color:var(--text-gray);border-bottom:3px solid transparent;transition:all .25s;white-space:nowrap;"><i class="fas fa-users" style="margin-right:5px;"></i>Peer Group</button>
-                        <button id="ktab-eksternal" onclick="kolabSwitchTab('eksternal')" style="flex-shrink:0;padding:14px 16px;border:none;background:none;font-family:'Poppins',sans-serif;font-size:0.75rem;font-weight:600;cursor:pointer;color:var(--text-gray);border-bottom:3px solid transparent;transition:all .25s;white-space:nowrap;"><i class="fas fa-globe" style="margin-right:5px;color:#8b5cf6;"></i>Komunitas</button>
+                    <div style="display:flex;overflow-x:auto;border-bottom:1px solid rgba(13,148,136,0.12);background:white;position:sticky;top:0;z-index:10;scrollbar-width:none;-webkit-overflow-scrolling:touch;">
+                        <button id="ktab-forum" onclick="kolabSwitchTab('forum')" style="flex:1;min-width:0;padding:12px 10px;border:none;background:none;font-family:'Poppins',sans-serif;font-size:0.72rem;font-weight:600;cursor:pointer;color:var(--primary);border-bottom:3px solid var(--primary);transition:all .25s;white-space:nowrap;"><i class="fas fa-comments" style="margin-right:4px;"></i>Forum</button>
+                        <button id="ktab-anonim" onclick="kolabSwitchTab('anonim')" style="flex:1;min-width:0;padding:12px 10px;border:none;background:none;font-family:'Poppins',sans-serif;font-size:0.72rem;font-weight:600;cursor:pointer;color:var(--text-gray);border-bottom:3px solid transparent;transition:all .25s;white-space:nowrap;"><i class="fas fa-mask" style="margin-right:4px;"></i>Anonim</button>
+                        <button id="ktab-group" onclick="kolabSwitchTab('group')" style="flex:1;min-width:0;padding:12px 10px;border:none;background:none;font-family:'Poppins',sans-serif;font-size:0.72rem;font-weight:600;cursor:pointer;color:var(--text-gray);border-bottom:3px solid transparent;transition:all .25s;white-space:nowrap;"><i class="fas fa-users" style="margin-right:4px;"></i>Peer Group</button>
+                        <button id="ktab-eksternal" onclick="kolabSwitchTab('eksternal')" style="flex:1;min-width:0;padding:12px 10px;border:none;background:none;font-family:'Poppins',sans-serif;font-size:0.72rem;font-weight:600;cursor:pointer;color:var(--text-gray);border-bottom:3px solid transparent;transition:all .25s;white-space:nowrap;"><i class="fas fa-globe" style="margin-right:4px;color:#8b5cf6;"></i>Komunitas</button>
                     </div>
-                    <div id="kpanel-forum" style="padding:24px;background:linear-gradient(135deg,#f0fdfa,#f8fffe);">
+                    <div id="kpanel-forum" style="padding:18px 16px;background:linear-gradient(135deg,#f0fdfa,#f8fffe);">
                         <p style="font-size:0.82rem;font-weight:700;color:var(--text-dark);margin-bottom:4px;"><i class="far fa-comments" style="margin-right:6px;"></i>Forum Diskusi Komunitas</p>
-                        <p style="font-size:0.75rem;color:var(--text-gray);margin-bottom:18px;">Ruang aman untuk berdiskusi tentang tekanan akademik, relasi sosial, produktivitas, dan kehidupan digital.</p>
+                        <p style="font-size:0.75rem;color:var(--text-gray);margin-bottom:14px;">Ruang aman untuk diskusi tentang akademik, relasi sosial, produktivitas, dan kehidupan digital.</p>
 
                         <!-- Kategori Filter -->
                         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;" id="forumCatFilter">
@@ -4758,9 +5298,9 @@
                             <div id="forumPostMsg" style="font-size:0.72rem;color:var(--primary);margin-top:6px;min-height:16px;"></div>
                         </div>
                     </div>
-                    <div id="kpanel-anonim" style="padding:24px;display:none;background:linear-gradient(135deg,#fafafa,#f1f5f9);">
+                    <div id="kpanel-anonim" style="padding:18px 16px;display:none;background:linear-gradient(135deg,#fafafa,#f1f5f9);">
                         <p style="font-size:0.82rem;font-weight:700;color:var(--text-dark);margin-bottom:4px;"><i class="fas fa-theater-masks" style="margin-right:6px;"></i>Ruang Cerita Anonim</p>
-                        <p style="font-size:0.75rem;color:var(--text-gray);margin-bottom:18px;">Bagikan pengalamanmu secara anonim. Identitasmu terlindungi sepenuhnya — ekspresikan apa yang kamu rasakan tanpa takut dihakimi.</p>
+                        <p style="font-size:0.75rem;color:var(--text-gray);margin-bottom:14px;">Bagikan pengalamanmu secara anonim. Identitasmu terlindungi — ceritamu aman di sini.</p>
 
                         <!-- Cerita List -->
                         <div id="anonStoryList" style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px;"></div>
@@ -4790,9 +5330,9 @@
                             <div id="anonMsg" style="font-size:0.72rem;color:#64748b;margin-top:8px;min-height:16px;"></div>
                         </div>
                     </div>
-                    <div id="kpanel-group" style="padding:24px;display:none;background:linear-gradient(135deg,#f0fdf4,#f0fdfa);">
+                    <div id="kpanel-group" style="padding:18px 16px;display:none;background:linear-gradient(135deg,#f0fdf4,#f0fdfa);">
                         <p style="font-size:0.82rem;font-weight:700;color:var(--text-dark);margin-bottom:4px;"><i class="fas fa-hands-helping" style="margin-right:6px;"></i>Peer Support Group</p>
-                        <p style="font-size:0.75rem;color:var(--text-gray);margin-bottom:18px;">Kelompok kecil berbasis minat atau kebutuhan tertentu. Temukan komunitasmu dan tumbuh bersama sesama yang memahami.</p>
+                        <p style="font-size:0.75rem;color:var(--text-gray);margin-bottom:14px;">Kelompok kecil berbasis minat atau kebutuhan. Temukan komunitasmu dan tumbuh bersama.</p>
 
                         <!-- Group List -->
                         <div id="peerGroupList" style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px;"></div>
@@ -4811,9 +5351,9 @@
                         </div>
                     </div>
                 <!-- KOMUNITAS EKSTERNAL PANEL -->
-                <div id="kpanel-eksternal" style="padding:24px;display:none;background:linear-gradient(135deg,#f5f3ff,#ede9fe);">
+                <div id="kpanel-eksternal" style="padding:18px 16px;display:none;background:linear-gradient(135deg,#f5f3ff,#ede9fe);">
                     <p style="font-size:0.82rem;font-weight:700;color:var(--text-dark);margin-bottom:4px;"><i class="fas fa-globe" style="margin-right:6px;color:#8b5cf6;"></i>Komunitas Eksternal</p>
-                    <p style="font-size:0.75rem;color:var(--text-gray);margin-bottom:20px;">Bergabung ke komunitas mental health Indonesia yang sudah aktif. Klik ikon platform untuk langsung terhubung.</p>
+                    <p style="font-size:0.75rem;color:var(--text-gray);margin-bottom:14px;">Bergabung ke komunitas mental health Indonesia yang aktif. Tap ikon platform untuk terhubung.</p>
 
                     <!-- Organisasi terpercaya -->
                     <div style="display:flex;flex-direction:column;gap:12px;">
@@ -4829,10 +5369,9 @@
                                     <p style="font-size:0.68rem;color:var(--text-light);">Pencegahan bunuh diri &amp; kesehatan mental remaja</p>
                                 </div>
                             </div>
-                            <p style="font-size:0.75rem;color:var(--text-gray);line-height:1.6;margin-bottom:12px;">Organisasi terdepan di Indonesia untuk pencegahan bunuh diri. Menyediakan edukasi, pelatihan, dan dukungan komunitas aktif.</p>
+                            <p class="ext-org-desc" style="font-size:0.75rem;color:var(--text-gray);line-height:1.6;margin-bottom:12px;">Organisasi terdepan di Indonesia untuk pencegahan bunuh diri. Menyediakan edukasi, pelatihan, dan dukungan komunitas aktif.</p>
                             <div style="display:flex;gap:8px;flex-wrap:wrap;">
                                 <a href="https://www.intothelightid.org" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:50px;background:#6d28d9;color:white;text-decoration:none;font-size:0.72rem;font-weight:600;"><i class="fas fa-globe"></i>Website</a>
-                                <a href="https://www.intothelightid.org" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:50px;background:#0d9488;color:white;text-decoration:none;font-size:0.72rem;font-weight:600;"><i class="fas fa-globe"></i>Website</a>
                                 <a href="https://www.instagram.com/intothelightid" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:50px;background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);color:white;text-decoration:none;font-size:0.72rem;font-weight:600;"><i class="fab fa-instagram"></i>Instagram</a>
                                 <a href="https://twitter.com/IntoTheLightID" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:50px;background:#1DA1F2;color:white;text-decoration:none;font-size:0.72rem;font-weight:600;"><i class="fab fa-twitter"></i>Twitter</a>
                             </div>
@@ -4849,7 +5388,7 @@
                                     <p style="font-size:0.68rem;color:var(--text-light);">Pemulihan trauma &amp; dukungan psikologis</p>
                                 </div>
                             </div>
-                            <p style="font-size:0.75rem;color:var(--text-gray);line-height:1.6;margin-bottom:12px;">Pusat layanan psikologi berbasis komunitas. Aktif memberikan pelatihan, konseling, dan membangun resiliensi masyarakat.</p>
+                            <p class="ext-org-desc" style="font-size:0.75rem;color:var(--text-gray);line-height:1.6;margin-bottom:12px;">Pusat layanan psikologi berbasis komunitas. Aktif memberikan pelatihan, konseling, dan membangun resiliensi masyarakat.</p>
                             <div style="display:flex;gap:8px;flex-wrap:wrap;">
                                 <a href="https://yayasanpulih.org" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:50px;background:#0d9488;color:white;text-decoration:none;font-size:0.72rem;font-weight:600;"><i class="fas fa-globe"></i>Website</a>
                                 <a href="https://www.instagram.com/yayasanpulih" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:50px;background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);color:white;text-decoration:none;font-size:0.72rem;font-weight:600;"><i class="fab fa-instagram"></i>Instagram</a>
@@ -4868,7 +5407,7 @@
                                     <p style="font-size:0.68rem;color:var(--text-light);">Anti-bullying &amp; kesehatan jiwa anak-remaja</p>
                                 </div>
                             </div>
-                            <p style="font-size:0.75rem;color:var(--text-gray);line-height:1.6;margin-bottom:12px;">Fokus pada pencegahan perundungan dan pengembangan karakter positif remaja Indonesia. Komunitas aktif di berbagai platform.</p>
+                            <p class="ext-org-desc" style="font-size:0.75rem;color:var(--text-gray);line-height:1.6;margin-bottom:12px;">Fokus pada pencegahan perundungan dan pengembangan karakter positif remaja Indonesia. Komunitas aktif di berbagai platform.</p>
                             <div style="display:flex;gap:8px;flex-wrap:wrap;">
                                 <a href="https://www.sejiwa.org" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:50px;background:#f59e0b;color:white;text-decoration:none;font-size:0.72rem;font-weight:600;"><i class="fas fa-globe"></i>Website</a>
                                 <a href="https://www.instagram.com/yayasansejiwa" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:50px;background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);color:white;text-decoration:none;font-size:0.72rem;font-weight:600;"><i class="fab fa-instagram"></i>Instagram</a>
@@ -5028,13 +5567,17 @@
             tab = tab || 'login';
             const m = document.getElementById('authModal');
             if (!m) { alert('Modal tidak ditemukan!'); return; }
-            m.style.display = '';   // reset display:none yang di-set closeAuthModal
-            // beri satu frame agar browser terapkan display dulu baru tambah class
+            // Set display:flex eksplisit — lebih andal di mobile daripada reset ke ''
+            m.style.display = 'flex';
+            // Double rAF: frame pertama browser proses display,
+            // frame kedua baru terapkan class active agar CSS transition berjalan
             requestAnimationFrame(() => {
-                m.classList.add('active');
-                document.body.style.overflow = 'hidden';
-                switchAuthTab(tab);
-                _clearAuthError();
+                requestAnimationFrame(() => {
+                    m.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                    switchAuthTab(tab);
+                    _clearAuthError();
+                });
             });
         }
 
@@ -5187,6 +5730,11 @@
                     const el = document.getElementById(id);
                     if (el) el.value = '';
                 });
+                // Refresh halaman aktif agar navbar langsung terupdate
+                setTimeout(function() {
+                    var cur = window._lastPage || 'beranda';
+                    if (typeof navigateTo === 'function') navigateTo(cur, true);
+                }, 150);
             } catch (err) {
                 _authFailCount++;
                 let msg = err.message || 'Gagal mendaftar. Coba lagi.';
@@ -5225,6 +5773,11 @@
                 _authToast(`Halo, ${nama}! Selamat datang kembali 👋`, 'success');
                 _authFailCount = 0;
                 document.getElementById('loginPass').value = '';
+                // Refresh halaman aktif agar navbar langsung terupdate
+                setTimeout(function() {
+                    var cur = window._lastPage || 'beranda';
+                    if (typeof navigateTo === 'function') navigateTo(cur, true);
+                }, 150);
             } catch (err) {
                 _authFailCount++;
                 let msg = err.message || 'Login gagal. Coba lagi.';
@@ -6006,62 +6559,62 @@
                     </div>
 
                     <!-- PANEL: HIFZ JOURNAL (CBT-based) -->
-                    <div id="panel-journal" style="display:none;background:linear-gradient(135deg,#fff7ed,#fef3c7);padding:32px;">
-                        <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
-                            <div style="width:40px;height:40px;background:linear-gradient(135deg,#f59e0b,#f97316);border-radius:12px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(245,158,11,0.3);">
-                                <i class="fas fa-journal-whills" style="color:white;font-size:1rem;"></i>
+                    <div id="panel-journal" style="display:none;background:linear-gradient(135deg,#fff7ed,#fef3c7);padding:24px 20px;">
+                        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
+                            <div style="width:36px;height:36px;background:linear-gradient(135deg,#f59e0b,#f97316);border-radius:10px;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(245,158,11,0.3);flex-shrink:0;">
+                                <i class="fas fa-journal-whills" style="color:white;font-size:0.9rem;"></i>
                             </div>
                             <div>
-                                <p style="font-size:1rem;font-weight:700;color:var(--text-dark);margin:0;">HIFZ Journal</p>
-                                <p style="font-size:0.72rem;color:var(--text-gray);margin:0;">Ekspresikan & proses kondisimu hari ini</p>
+                                <p style="font-size:0.92rem;font-weight:700;color:var(--text-dark);margin:0;">HIFZ Journal</p>
+                                <p style="font-size:0.7rem;color:var(--text-gray);margin:0;">Ekspresikan & proses kondisimu hari ini</p>
                             </div>
                         </div>
-                        <p style="font-size:0.75rem;color:var(--text-light);margin-bottom:24px;margin-top:6px;"><i class="fas fa-lock" style="margin-right:4px;"></i>Hanya tersimpan di perangkatmu · Bersifat privat</p>
+                        <p style="font-size:0.72rem;color:var(--text-light);margin-bottom:18px;margin-top:6px;"><i class="fas fa-lock" style="margin-right:4px;"></i>Hanya tersimpan di perangkatmu · Bersifat privat</p>
 
                         <!-- Field 1: Dirasakan -->
-                        <div style="margin-bottom:18px;">
+                        <div class="journal-field" style="margin-bottom:18px;">
                             <label style="display:flex;align-items:center;gap:8px;font-size:0.82rem;font-weight:700;color:var(--text-dark);margin-bottom:8px;">
                                 <span style="width:28px;height:28px;background:linear-gradient(135deg,#f59e0b,#f97316);border-radius:8px;display:inline-flex;align-items:center;justify-content:center;color:white;font-size:0.72rem;font-weight:800;flex-shrink:0;">1</span>
                                 Apa yang kamu rasakan?
                             </label>
-                            <p style="font-size:0.74rem;color:var(--text-gray);margin-bottom:8px;padding-left:36px;">Gambarkan emosi atau perasaan yang muncul saat ini — senang, cemas, lelah, kosong, campur aduk, dll.</p>
-                            <textarea id="journal-rasakan" placeholder="Contoh: Aku merasa cemas dan tidak tenang, seperti ada sesuatu yang mengganjal..." style="width:100%;height:80px;border:1.5px solid rgba(245,158,11,0.3);border-radius:12px;padding:12px 14px;font-family:'Poppins',sans-serif;font-size:0.85rem;color:var(--text-dark);background:white;resize:none;outline:none;transition:border .3s;line-height:1.7;box-sizing:border-box;" onfocus="this.style.borderColor='#f59e0b'" onblur="this.style.borderColor='rgba(245,158,11,0.3)'"></textarea>
+                            <p class="journal-hint" style="font-size:0.74rem;color:var(--text-gray);margin-bottom:8px;padding-left:36px;">Gambarkan emosi atau perasaan yang muncul saat ini — senang, cemas, lelah, kosong, campur aduk, dll.</p>
+                            <textarea id="journal-rasakan" placeholder="Aku merasa cemas dan tidak tenang, seperti ada sesuatu yang mengganjal..." style="width:100%;height:80px;border:1.5px solid rgba(245,158,11,0.3);border-radius:12px;padding:12px 14px;font-family:'Poppins',sans-serif;font-size:0.85rem;color:var(--text-dark);background:white;resize:none;outline:none;transition:border .3s;line-height:1.7;box-sizing:border-box;" onfocus="this.style.borderColor='#f59e0b'" onblur="this.style.borderColor='rgba(245,158,11,0.3)'"></textarea>
                         </div>
 
                         <!-- Field 2: Terjadi -->
-                        <div style="margin-bottom:18px;">
+                        <div class="journal-field" style="margin-bottom:18px;">
                             <label style="display:flex;align-items:center;gap:8px;font-size:0.82rem;font-weight:700;color:var(--text-dark);margin-bottom:8px;">
                                 <span style="width:28px;height:28px;background:linear-gradient(135deg,#10b981,#0d9488);border-radius:8px;display:inline-flex;align-items:center;justify-content:center;color:white;font-size:0.72rem;font-weight:800;flex-shrink:0;">2</span>
                                 Apa yang terjadi?
                             </label>
-                            <p style="font-size:0.74rem;color:var(--text-gray);margin-bottom:8px;padding-left:36px;">Ceritakan situasi atau kejadian yang memicu perasaan tersebut secara singkat dan faktual.</p>
-                            <textarea id="journal-terjadi" placeholder="Contoh: Tadi presentasi di depan kelas, tapi aku lupa beberapa poin penting dan dosen bertanya hal yang tidak aku siapkan..." style="width:100%;height:80px;border:1.5px solid rgba(16,185,129,0.3);border-radius:12px;padding:12px 14px;font-family:'Poppins',sans-serif;font-size:0.85rem;color:var(--text-dark);background:white;resize:none;outline:none;transition:border .3s;line-height:1.7;box-sizing:border-box;" onfocus="this.style.borderColor='#10b981'" onblur="this.style.borderColor='rgba(16,185,129,0.3)'"></textarea>
+                            <p class="journal-hint" style="font-size:0.74rem;color:var(--text-gray);margin-bottom:8px;padding-left:36px;">Ceritakan situasi atau kejadian yang memicu perasaan tersebut secara singkat dan faktual.</p>
+                            <textarea id="journal-terjadi" placeholder="Tadi presentasi di kelas, tapi aku lupa beberapa poin dan dosen bertanya hal yang tidak aku siapkan..." style="width:100%;height:80px;border:1.5px solid rgba(16,185,129,0.3);border-radius:12px;padding:12px 14px;font-family:'Poppins',sans-serif;font-size:0.85rem;color:var(--text-dark);background:white;resize:none;outline:none;transition:border .3s;line-height:1.7;box-sizing:border-box;" onfocus="this.style.borderColor='#10b981'" onblur="this.style.borderColor='rgba(16,185,129,0.3)'"></textarea>
                         </div>
 
                         <!-- Field 3: Dipikirkan -->
-                        <div style="margin-bottom:18px;">
+                        <div class="journal-field" style="margin-bottom:18px;">
                             <label style="display:flex;align-items:center;gap:8px;font-size:0.82rem;font-weight:700;color:var(--text-dark);margin-bottom:8px;">
                                 <span style="width:28px;height:28px;background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:8px;display:inline-flex;align-items:center;justify-content:center;color:white;font-size:0.72rem;font-weight:800;flex-shrink:0;">3</span>
                                 Apa yang kamu pikirkan?
                             </label>
-                            <p style="font-size:0.74rem;color:var(--text-gray);margin-bottom:8px;padding-left:36px;">Tuliskan pikiran atau cerita yang muncul dalam kepalamu tentang kejadian itu — apa yang kamu katakan pada dirimu sendiri?</p>
-                            <textarea id="journal-pikirkan" placeholder='Contoh: "Aku pasti terlihat bodoh di depan semua orang. Dosen pasti kecewa. Aku tidak cukup baik."' style="width:100%;height:80px;border:1.5px solid rgba(99,102,241,0.3);border-radius:12px;padding:12px 14px;font-family:'Poppins',sans-serif;font-size:0.85rem;color:var(--text-dark);background:white;resize:none;outline:none;transition:border .3s;line-height:1.7;box-sizing:border-box;" onfocus="this.style.borderColor='#6366f1'" onblur="this.style.borderColor='rgba(99,102,241,0.3)'"></textarea>
+                            <p class="journal-hint" style="font-size:0.74rem;color:var(--text-gray);margin-bottom:8px;padding-left:36px;">Apa yang kamu katakan pada dirimu sendiri tentang kejadian itu?</p>
+                            <textarea id="journal-pikirkan" placeholder='"Aku pasti terlihat bodoh. Dosen pasti kecewa. Aku tidak cukup baik."' style="width:100%;height:80px;border:1.5px solid rgba(99,102,241,0.3);border-radius:12px;padding:12px 14px;font-family:'Poppins',sans-serif;font-size:0.85rem;color:var(--text-dark);background:white;resize:none;outline:none;transition:border .3s;line-height:1.7;box-sizing:border-box;" onfocus="this.style.borderColor='#6366f1'" onblur="this.style.borderColor='rgba(99,102,241,0.3)'"></textarea>
                         </div>
 
                         <!-- Field 4: Dilakukan -->
-                        <div style="margin-bottom:24px;">
+                        <div class="journal-field" style="margin-bottom:24px;">
                             <label style="display:flex;align-items:center;gap:8px;font-size:0.82rem;font-weight:700;color:var(--text-dark);margin-bottom:8px;">
                                 <span style="width:28px;height:28px;background:linear-gradient(135deg,#ec4899,#f43f5e);border-radius:8px;display:inline-flex;align-items:center;justify-content:center;color:white;font-size:0.72rem;font-weight:800;flex-shrink:0;">4</span>
                                 Apa yang sudah atau ingin kamu lakukan?
                             </label>
-                            <p style="font-size:0.74rem;color:var(--text-gray);margin-bottom:8px;padding-left:36px;">Apa tindakan yang sudah kamu ambil, atau yang ingin kamu lakukan untuk merespons situasi ini?</p>
-                            <textarea id="journal-lakukan" placeholder="Contoh: Aku memilih diam dan pulang lebih cepat. Inginnya bicara ke teman dekat, tapi belum berani. Mungkin besok minta feedback ke dosen..." style="width:100%;height:80px;border:1.5px solid rgba(236,72,153,0.3);border-radius:12px;padding:12px 14px;font-family:'Poppins',sans-serif;font-size:0.85rem;color:var(--text-dark);background:white;resize:none;outline:none;transition:border .3s;line-height:1.7;box-sizing:border-box;" onfocus="this.style.borderColor='#ec4899'" onblur="this.style.borderColor='rgba(236,72,153,0.3)'"></textarea>
+                            <p class="journal-hint" style="font-size:0.74rem;color:var(--text-gray);margin-bottom:8px;padding-left:36px;">Tindakan yang sudah diambil, atau yang ingin kamu lakukan untuk merespons situasi ini.</p>
+                            <textarea id="journal-lakukan" placeholder="Aku memilih diam dan pulang lebih cepat. Ingin bicara ke teman, tapi belum berani..." style="width:100%;height:80px;border:1.5px solid rgba(236,72,153,0.3);border-radius:12px;padding:12px 14px;font-family:'Poppins',sans-serif;font-size:0.85rem;color:var(--text-dark);background:white;resize:none;outline:none;transition:border .3s;line-height:1.7;box-sizing:border-box;" onfocus="this.style.borderColor='#ec4899'" onblur="this.style.borderColor='rgba(236,72,153,0.3)'"></textarea>
                         </div>
 
-                        <button onclick="simpanJournal()" style="background:linear-gradient(135deg,#f59e0b,#f97316);color:white;border:none;padding:13px 32px;border-radius:50px;font-family:'Poppins',sans-serif;font-size:0.88rem;font-weight:600;cursor:pointer;transition:all .3s;box-shadow:0 4px 15px rgba(245,158,11,0.35);margin-bottom:28px;display:block;width:100%;">
-                            <i class="fas fa-save" style="margin-right:8px;"></i>Simpan Entri Journal
+                        <button onclick="simpanJournal()" style="background:linear-gradient(135deg,#f59e0b,#f97316);color:white;border:none;padding:12px 28px;border-radius:50px;font-family:'Poppins',sans-serif;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all .3s;box-shadow:0 4px 15px rgba(245,158,11,0.35);margin-bottom:20px;display:block;width:100%;">
+                            <i class="fas fa-save" style="margin-right:7px;"></i>Simpan Entri Journal
                         </button>
-                        <div id="journal-save-msg" style="text-align:center;font-size:0.78rem;min-height:20px;margin-top:-20px;margin-bottom:16px;"></div>
+                        <div id="journal-save-msg" style="text-align:center;font-size:0.78rem;min-height:18px;margin-top:-14px;margin-bottom:14px;"></div>
 
                         <!-- Journal History -->
                         <div>
@@ -7017,9 +7570,9 @@
 
             /* ── Status levels ── */
             const STATUS = {
-                aman      : { label:'Aman', emoji:'🟢', color:'#10b981', bg:'rgba(16,185,129,0.07)', border:'rgba(16,185,129,0.25)', icon:'fas fa-shield-check', desc:'Kondisi psikologismu secara keseluruhan terpantau stabil. Terus pertahankan kebiasaan baikmu!' },
-                perhatian : { label:'Perhatian', emoji:'🟡', color:'#f59e0b', bg:'rgba(245,158,11,0.07)', border:'rgba(245,158,11,0.3)', icon:'fas fa-triangle-exclamation', desc:'Ada beberapa sinyal perubahan yang perlu diperhatikan. Jangan abaikan perasaanmu sekarang.' },
-                waspada   : { label:'Waspada', emoji:'🔴', color:'#ef4444', bg:'rgba(239,68,68,0.07)', border:'rgba(239,68,68,0.3)', icon:'fas fa-circle-exclamation', desc:'Pola data menunjukkan beberapa tanda yang memerlukan tindakan segera. Kamu tidak sendiri.' }
+                aman      : { label:'Aman', emoji:'', color:'#10b981', bg:'rgba(16,185,129,0.07)', border:'rgba(16,185,129,0.25)', icon:'fas fa-shield-check', desc:'Kondisi psikologismu secara keseluruhan terpantau stabil. Terus pertahankan kebiasaan baikmu!' },
+                perhatian : { label:'Perhatian', emoji:'', color:'#f59e0b', bg:'rgba(245,158,11,0.07)', border:'rgba(245,158,11,0.3)', icon:'fas fa-triangle-exclamation', desc:'Ada beberapa sinyal perubahan yang perlu diperhatikan. Jangan abaikan perasaanmu sekarang.' },
+                waspada   : { label:'Waspada', emoji:'', color:'#ef4444', bg:'rgba(239,68,68,0.07)', border:'rgba(239,68,68,0.3)', icon:'fas fa-circle-exclamation', desc:'Pola data menunjukkan beberapa tanda yang memerlukan tindakan segera. Kamu tidak sendiri.' }
             };
 
             /* ── Pick status from score ── */
@@ -7303,25 +7856,27 @@
     <section class="feature-detail" id="fitur-ruh-a">
         <div class="feature-detail-inner">
 
-            <!-- Quran Verse Cards -->
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:32px;">
-                <!-- Ar-Ra'd 28 -->
-                <div style="background:linear-gradient(135deg,#0d9488,#06b6d4);border-radius:24px;padding:32px 28px;color:#fff;position:relative;overflow:hidden;">
-                    <div style="position:absolute;right:-20px;top:-20px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,0.07);"></div>
-                    <div style="position:absolute;right:20px;bottom:-30px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,0.05);"></div>
-                    <div style="font-size:0.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.65);margin-bottom:16px;">QS. Ar-Ra'd : 28</div>
-                    <div style="font-size:1.45rem;line-height:2;direction:rtl;text-align:right;color:rgba(255,255,255,.95);font-family:'Georgia',serif;margin-bottom:18px;">أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ</div>
-                    <div style="height:1px;background:rgba(255,255,255,.2);margin-bottom:16px;"></div>
-                    <div style="font-size:0.88rem;font-style:italic;color:rgba(255,255,255,.85);line-height:1.7;">"Ingatlah, hanya dengan mengingat Allah hati menjadi tenteram."</div>
-                </div>
-                <!-- Az-Zumar 53 -->
-                <div style="background:linear-gradient(135deg,#7c3aed,#8b5cf6);border-radius:24px;padding:32px 28px;color:#fff;position:relative;overflow:hidden;">
-                    <div style="position:absolute;right:-20px;top:-20px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,0.07);"></div>
-                    <div style="position:absolute;right:20px;bottom:-30px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,0.05);"></div>
-                    <div style="font-size:0.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.65);margin-bottom:16px;">QS. Az-Zumar : 53</div>
-                    <div style="font-size:1.2rem;line-height:2;direction:rtl;text-align:right;color:rgba(255,255,255,.95);font-family:'Georgia',serif;margin-bottom:18px;">قُلْ يَا عِبَادِيَ الَّذِينَ أَسْرَفُوا عَلَىٰ أَنفُسِهِمْ لَا تَقْنَطُوا مِن رَّحْمَةِ اللَّهِ</div>
-                    <div style="height:1px;background:rgba(255,255,255,.2);margin-bottom:16px;"></div>
-                    <div style="font-size:0.88rem;font-style:italic;color:rgba(255,255,255,.85);line-height:1.7;">"Janganlah kamu berputus asa dari rahmat Allah."</div>
+            <!-- Quran Verse Cards — horizontal scroll on mobile, grid on desktop -->
+            <div class="ruh-ayat-wrap" style="margin-bottom:32px;">
+                <div class="ruh-ayat-grid">
+                    <!-- Ar-Ra'd 28 -->
+                    <div class="ruh-ayat-card" style="background:linear-gradient(135deg,#0d9488,#06b6d4);">
+                        <div style="position:absolute;right:-20px;top:-20px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,0.07);"></div>
+                        <div style="position:absolute;right:20px;bottom:-30px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,0.05);"></div>
+                        <div style="font-size:0.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.65);margin-bottom:16px;">QS. Ar-Ra'd : 28</div>
+                        <div style="font-size:1.45rem;line-height:2;direction:rtl;text-align:right;color:rgba(255,255,255,.95);font-family:'Georgia',serif;margin-bottom:18px;">أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ</div>
+                        <div style="height:1px;background:rgba(255,255,255,.2);margin-bottom:16px;"></div>
+                        <div style="font-size:0.88rem;font-style:italic;color:rgba(255,255,255,.85);line-height:1.7;">"Ingatlah, hanya dengan mengingat Allah hati menjadi tenteram."</div>
+                    </div>
+                    <!-- Az-Zumar 53 -->
+                    <div class="ruh-ayat-card" style="background:linear-gradient(135deg,#7c3aed,#8b5cf6);">
+                        <div style="position:absolute;right:-20px;top:-20px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,0.07);"></div>
+                        <div style="position:absolute;right:20px;bottom:-30px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,0.05);"></div>
+                        <div style="font-size:0.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.65);margin-bottom:16px;">QS. Az-Zumar : 53</div>
+                        <div style="font-size:1.2rem;line-height:2;direction:rtl;text-align:right;color:rgba(255,255,255,.95);font-family:'Georgia',serif;margin-bottom:18px;">قُلْ يَا عِبَادِيَ الَّذِينَ أَسْرَفُوا عَلَىٰ أَنفُسِهِمْ لَا تَقْنَطُوا مِن رَّحْمَةِ اللَّهِ</div>
+                        <div style="height:1px;background:rgba(255,255,255,.2);margin-bottom:16px;"></div>
+                        <div style="font-size:0.88rem;font-style:italic;color:rgba(255,255,255,.85);line-height:1.7;">"Janganlah kamu berputus asa dari rahmat Allah."</div>
+                    </div>
                 </div>
             </div>
 
@@ -7710,8 +8265,8 @@
                         <div style="width:68px;height:68px;background:#0d9488;border-radius:20px;display:flex;align-items:center;justify-content:center;margin-bottom:20px;position:relative;z-index:1;box-shadow:0 8px 20px rgba(13,148,136,.30);"><i class="fas fa-clipboard-check" style="color:#fff;font-size:1.6rem;"></i></div>
                         <span style="font-size:0.67rem;font-weight:700;color:#0d9488;letter-spacing:.12em;text-transform:uppercase;display:block;margin-bottom:10px;position:relative;z-index:1;">SKRINING & JURNAL</span>
                         <h2 style="font-size:1.9rem;font-weight:800;color:#1a1a2e;margin-bottom:14px;position:relative;z-index:1;">HIFZ Check & Journal</h2>
-                        <p style="color:#64748b;font-size:0.95rem;line-height:1.7;margin-bottom:22px;max-width:480px;position:relative;z-index:1;">Periksa kondisi psikologismu secara berkala — dari <em>mood</em>, stres, dan kecemasan hingga kualitas tidur dan energi. Catat refleksi harianmu di HIFZ Journal.</p>
-                        <ul style="list-style:none;padding:0;margin-bottom:30px;display:flex;flex-direction:column;gap:10px;position:relative;z-index:1;">
+                        <p class="hfcard-desc" style="color:#64748b;font-size:0.95rem;line-height:1.7;margin-bottom:22px;max-width:480px;position:relative;z-index:1;">Periksa kondisi psikologismu secara berkala — dari <em>mood</em>, stres, dan kecemasan hingga kualitas tidur dan energi. Catat refleksi harianmu di HIFZ Journal.</p>
+                        <ul class="hfcard-bullets" style="list-style:none;padding:0;margin-bottom:30px;display:flex;flex-direction:column;gap:10px;position:relative;z-index:1;">
                             <li style="display:flex;align-items:center;gap:10px;font-size:0.88rem;color:#374151;"><span class="u-check-dot"><i class="fas fa-check" style="color:#fff;font-size:0.6rem;"></i></span>Skrining stres, kecemasan, depresi & risiko self-harm</li>
                             <li style="display:flex;align-items:center;gap:10px;font-size:0.88rem;color:#374151;"><span class="u-check-dot"><i class="fas fa-check" style="color:#fff;font-size:0.6rem;"></i></span>Hasil: Relatif Baik / Perlu Perhatian / Perlu Dukungan / Perlu Bantuan Segera</li>
                             <li style="display:flex;align-items:center;gap:10px;font-size:0.88rem;color:#374151;"><span class="u-check-dot"><i class="fas fa-check" style="color:#fff;font-size:0.6rem;"></i></span>Riwayat jurnal untuk melihat perubahan dari waktu ke waktu</li>
@@ -7724,7 +8279,7 @@
                         <div style="width:68px;height:68px;background:linear-gradient(135deg,#ef4444,#dc2626);border-radius:20px;display:flex;align-items:center;justify-content:center;margin-bottom:24px;position:relative;z-index:1;box-shadow:0 8px 20px rgba(239,68,68,.30);"><i class="fas fa-bell" style="color:#fff;font-size:1.6rem;"></i></div>
                         <span style="font-size:0.67rem;font-weight:700;color:#ef4444;letter-spacing:.12em;text-transform:uppercase;position:relative;z-index:1;">EARLY WARNING</span>
                         <h3 class="u-mini-title">HIFZ Alert</h3>
-                        <p class="u-mini-desc">Early Warning System — deteksi pola perubahan kondisi psikologis dan beri peringatan lebih awal sebelum memburuk.</p>
+                        <p class="u-mini-desc hfcard-desc">Early Warning System — deteksi pola perubahan kondisi psikologis dan beri peringatan lebih awal sebelum memburuk.</p>
                         <div style="margin-top:20px;display:inline-flex;align-items:center;gap:6px;color:#ef4444;font-size:0.8rem;font-weight:600;"><i class="fas fa-arrow-right"></i> Buka Fitur</div>
                     </div>
                 </div>
@@ -7736,7 +8291,7 @@
                         <div style="width:68px;height:68px;background:#f59e0b;border-radius:20px;display:flex;align-items:center;justify-content:center;margin-bottom:24px;position:relative;z-index:1;box-shadow:0 8px 20px rgba(245,158,11,.30);"><i class="fas fa-graduation-cap" style="color:#fff;font-size:1.6rem;"></i></div>
                         <span style="font-size:0.67rem;font-weight:700;color:#f59e0b;letter-spacing:.12em;text-transform:uppercase;position:relative;z-index:1;">EDUKASI</span>
                         <h3 class="u-mini-title">HIFZ Edu & Coping</h3>
-                        <p class="u-mini-desc">Psikoedukasi interaktif dan latihan pengelolaan emosi: pernapasan, grounding, mindfulness, dan community challenge.</p>
+                        <p class="u-mini-desc hfcard-desc">Psikoedukasi interaktif dan latihan pengelolaan emosi: pernapasan, grounding, mindfulness, dan community challenge.</p>
                         <div style="margin-top:20px;display:inline-flex;align-items:center;gap:6px;color:#f59e0b;font-size:0.8rem;font-weight:600;"><i class="fas fa-arrow-right"></i> Buka Fitur</div>
                     </div>
                     <div onclick="navigateTo('fitur-ruh')" style="background:#fff;border-radius:24px;padding:36px 32px 32px;position:relative;overflow:hidden;cursor:pointer;transition:box-shadow .25s,transform .25s;min-height:280px;" onmouseover="this.style.boxShadow='0 16px 48px rgba(139,92,246,.15)';this.style.transform='translateY(-4px)'" onmouseout="this.style.boxShadow='0 2px 12px rgba(0,0,0,.05)';this.style.transform=''">
@@ -7744,7 +8299,7 @@
                         <div style="width:68px;height:68px;background:#8b5cf6;border-radius:20px;display:flex;align-items:center;justify-content:center;margin-bottom:24px;position:relative;z-index:1;box-shadow:0 8px 20px rgba(139,92,246,.30);"><i class="fas fa-book-open-reader" style="color:#fff;font-size:1.6rem;"></i></div>
                         <span style="font-size:0.67rem;font-weight:700;color:#8b5cf6;letter-spacing:.12em;text-transform:uppercase;position:relative;z-index:1;">SPIRITUAL</span>
                         <h3 class="u-mini-title">HIFZ Ruh & Hope</h3>
-                        <p class="u-mini-desc">Ayat refleksi, dzikir, Islamic affirmation, jurnal syukur, cerita inspiratif, dan latihan membangun harapan.</p>
+                        <p class="u-mini-desc hfcard-desc">Ayat refleksi, dzikir, Islamic affirmation, jurnal syukur, cerita inspiratif, dan latihan membangun harapan.</p>
                         <div style="margin-top:20px;display:inline-flex;align-items:center;gap:6px;color:#8b5cf6;font-size:0.8rem;font-weight:600;"><i class="fas fa-arrow-right"></i> Buka Fitur</div>
                     </div>
                     <div onclick="navigateTo('fitur-a')" style="background:#fff;border-radius:24px;padding:36px 32px 32px;position:relative;overflow:hidden;cursor:pointer;transition:box-shadow .25s,transform .25s;min-height:280px;" onmouseover="this.style.boxShadow='0 16px 48px rgba(236,72,153,.15)';this.style.transform='translateY(-4px)'" onmouseout="this.style.boxShadow='0 2px 12px rgba(0,0,0,.05)';this.style.transform=''">
@@ -7752,7 +8307,7 @@
                         <div style="width:68px;height:68px;background:#ec4899;border-radius:20px;display:flex;align-items:center;justify-content:center;margin-bottom:24px;position:relative;z-index:1;box-shadow:0 8px 20px rgba(236,72,153,.30);"><i class="fa-solid fa-people-group" style="color:#fff;font-size:1.5rem;"></i></div>
                         <span style="font-size:0.67rem;font-weight:700;color:#ec4899;letter-spacing:.12em;text-transform:uppercase;position:relative;z-index:1;">DUKUNGAN</span>
                         <h3 class="u-mini-title">HIFZ Support & Safe</h3>
-                        <p class="u-mini-desc">Dukungan sebaya, koneksi ke psikolog & konselor, dan jalur bantuan segera ketika kamu butuh lebih dari sekadar cerita.</p>
+                        <p class="u-mini-desc hfcard-desc">Dukungan sebaya, koneksi ke psikolog & konselor, dan jalur bantuan segera ketika kamu butuh lebih dari sekadar cerita.</p>
                         <div style="margin-top:20px;display:inline-flex;align-items:center;gap:6px;color:#ec4899;font-size:0.8rem;font-weight:600;"><i class="fas fa-arrow-right"></i> Buka Fitur</div>
                     </div>
                 </div>
@@ -8362,6 +8917,40 @@
         </div>`;
     }
 
+    })();
+
+    // ===== MOBILE: DISABLE INLINE HOVER SCALE EFFECTS =====
+    // On touch devices, onmouseover/onmouseout fire inconsistently
+    // and can leave elements stuck in scaled/transformed state.
+    // We strip those attributes on mobile.
+    (function fixMobileHover() {
+        const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+        if (!isTouchDevice) return;
+
+        // Wait for DOM to be ready
+        function stripHoverStyles() {
+            // Remove onmouseover/onmouseout on keunggulan cards (they have scale in onmouseout)
+            document.querySelectorAll('.keunggulan-center').forEach(el => {
+                el.removeAttribute('onmouseover');
+                el.removeAttribute('onmouseout');
+                el.style.transform = '';
+            });
+
+            // Fix all inline onmouseout that reset to scale() — target parent
+            const keunggulanGrid = document.querySelector('#fitur .reveal > div[style*="grid-template-columns"]');
+            if (keunggulanGrid) {
+                keunggulanGrid.querySelectorAll('[onmouseover]').forEach(el => {
+                    el.removeAttribute('onmouseover');
+                    el.removeAttribute('onmouseout');
+                });
+            }
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', stripHoverStyles);
+        } else {
+            stripHoverStyles();
+        }
     })();
     </script>
 </body>
