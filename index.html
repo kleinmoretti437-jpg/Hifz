@@ -3167,7 +3167,6 @@
         /* Panel padding ringkas */
         #kpanel-forum,
         #kpanel-anonim,
-        #kpanel-group,
         #kpanel-eksternal {
             padding:16px 14px !important;
         }
@@ -4036,7 +4035,7 @@
 
             // Exposed functions
             window.moodSwitchTab = function(tab) {
-                ['checkin','skrining','grafik','journal','refleksi'].forEach(t => {
+                ['checkin','skrining','refleksi'].forEach(t => {
                     const panel = document.getElementById('panel-'+t);
                     if (panel) panel.style.display = t===tab ? 'block' : 'none';
                     const btn = document.getElementById('tab-'+t);
@@ -4055,97 +4054,126 @@
                         sfbtn.classList.toggle('active', t===tab);
                     }
                 });
-                if (tab === 'grafik') { updateChart(); renderSummary(); }
+
             };
 
             // ===== SKRINING KESEHATAN MENTAL =====
+            // Instrumen 10 item, skala Likert 1–7
+            // Item positif (1,2,3,8,9): skor = nilai pilihan langsung (SS=1 … STS=7)
+            // Item negatif (4,5,6,7,10): reverse scoring (SS=7 … STS=1)
             const SKRINING_QUESTIONS = [
                 {
-                    id: 'stres',
-                    icon: 'fas fa-head-side-virus',
-                    label: 'Stres',
-                    text: 'Seberapa sering kamu merasa tertekan atau kewalahan dalam 2 minggu terakhir?',
-                    desc: 'Stres adalah respons alami, tapi jika terlalu sering bisa memengaruhi kesejahteraan.',
-                    options: [
-                        { val: 0, text: 'Hampir tidak pernah', color: '#10b981' },
-                        { val: 1, text: 'Sesekali (1–2 kali)', color: '#f59e0b' },
-                        { val: 2, text: 'Cukup sering (3–5 kali)', color: '#f97316' },
-                        { val: 3, text: 'Hampir setiap hari', color: '#ef4444' }
-                    ]
+                    id: 'q1',
+                    num: 1,
+                    icon: 'fas fa-heart',
+                    label: 'Kepribadian',
+                    text: 'Saya menyukai sebagian besar kepribadian saya',
+                    reverse: false
                 },
                 {
-                    id: 'cemas',
-                    icon: 'fas fa-heart-pulse',
-                    label: 'Kecemasan',
-                    text: 'Seberapa sering kamu merasa cemas, khawatir berlebihan, atau sulit rileks?',
-                    desc: 'Kecemasan ringan adalah normal. Tapi kecemasan yang terus-menerus perlu diperhatikan.',
-                    options: [
-                        { val: 0, text: 'Hampir tidak pernah', color: '#10b981' },
-                        { val: 1, text: 'Sesekali, masih bisa dikendalikan', color: '#f59e0b' },
-                        { val: 2, text: 'Cukup mengganggu aktivitas', color: '#f97316' },
-                        { val: 3, text: 'Sangat mengganggu, sulit diatasi', color: '#ef4444' }
-                    ]
+                    id: 'q2',
+                    num: 2,
+                    icon: 'fas fa-road',
+                    label: 'Perjalanan Hidup',
+                    text: 'Ketika saya mengingat perjalanan hidup saya, saya merasa puas dengan apa yang terjadi sejauh ini',
+                    reverse: false
                 },
                 {
-                    id: 'depresi',
-                    icon: 'fas fa-cloud-rain',
-                    label: 'Depresi',
-                    text: 'Apakah kamu sering merasa kosong, sedih berkepanjangan, atau kehilangan minat terhadap hal yang biasa kamu sukai?',
-                    desc: 'Perasaan sedih sesekali itu wajar. Tapi jika berlangsung lebih dari 2 minggu, itu perlu diperhatikan.',
-                    options: [
-                        { val: 0, text: 'Tidak, aku masih bisa menikmati hal-hal', color: '#10b981' },
-                        { val: 1, text: 'Sedikit, tapi masih bisa berfungsi', color: '#f59e0b' },
-                        { val: 2, text: 'Ya, cukup sering dan mengganggu', color: '#f97316' },
-                        { val: 3, text: 'Ya, hampir setiap hari dan berat', color: '#ef4444' }
-                    ]
+                    id: 'q3',
+                    num: 3,
+                    icon: 'fas fa-bullseye',
+                    label: 'Tujuan Hidup',
+                    text: 'Beberapa orang menjalani hidup tanpa tujuan, tapi saya bukan bagian dari mereka',
+                    reverse: false
                 },
                 {
-                    id: 'tidur',
-                    icon: 'fas fa-moon',
-                    label: 'Kualitas Tidur',
-                    text: 'Bagaimana kualitas tidurmu dalam seminggu terakhir?',
-                    desc: 'Tidur adalah fondasi kesehatan mental. Kurang tidur memengaruhi suasana hati dan konsentrasi.',
-                    options: [
-                        { val: 0, text: 'Baik, cukup dan berkualitas', color: '#10b981' },
-                        { val: 1, text: 'Kadang susah tidur atau sering terbangun', color: '#f59e0b' },
-                        { val: 2, text: 'Sering sulit tidur atau tidur berlebih', color: '#f97316' },
-                        { val: 3, text: 'Sangat terganggu, hampir tidak bisa tidur normal', color: '#ef4444' }
-                    ]
+                    id: 'q4',
+                    num: 4,
+                    icon: 'fas fa-weight-hanging',
+                    label: 'Tuntutan Hidup',
+                    text: 'Tuntutan hidup sehari-hari kadang membuat saya terpuruk',
+                    reverse: true
                 },
                 {
-                    id: 'energi',
-                    icon: 'fas fa-bolt',
-                    label: 'Energi & Motivasi',
-                    text: 'Bagaimana tingkat energi dan motivasimu untuk menjalani aktivitas sehari-hari?',
-                    desc: 'Kelelahan yang berkepanjangan bisa menjadi tanda burnout atau masalah psikologis lain.',
-                    options: [
-                        { val: 0, text: 'Baik, aku masih bersemangat', color: '#10b981' },
-                        { val: 1, text: 'Sedikit lesu tapi masih bisa beraktivitas', color: '#f59e0b' },
-                        { val: 2, text: 'Sering lelah dan kurang motivasi', color: '#f97316' },
-                        { val: 3, text: 'Sangat lelah, hampir tidak ada motivasi', color: '#ef4444' }
-                    ]
+                    id: 'q5',
+                    num: 5,
+                    icon: 'fas fa-medal',
+                    label: 'Pencapaian',
+                    text: 'Dalam beberapa hal, saya merasa kecewa dengan pencapaian saya',
+                    reverse: true
                 },
                 {
-                    id: 'sosial',
+                    id: 'q6',
+                    num: 6,
                     icon: 'fas fa-users',
-                    label: 'Relasi Sosial',
-                    text: 'Bagaimana kondisi hubungan sosialmu dengan orang di sekitar (teman, keluarga, orang terdekat)?',
-                    desc: 'Dukungan sosial adalah pelindung penting terhadap masalah kesehatan mental.',
-                    options: [
-                        { val: 0, text: 'Baik, aku merasa didukung dan terhubung', color: '#10b981' },
-                        { val: 1, text: 'Cukup, meskipun ada beberapa ketegangan', color: '#f59e0b' },
-                        { val: 2, text: 'Kurang baik, sering merasa sendirian', color: '#f97316' },
-                        { val: 3, text: 'Buruk, sangat terisolasi atau berkonflik', color: '#ef4444' }
-                    ]
+                    label: 'Hubungan Dekat',
+                    text: 'Menurut saya, mempertahankan hubungan dekat itu sulit dan membuat frustrasi',
+                    reverse: true
+                },
+                {
+                    id: 'q7',
+                    num: 7,
+                    icon: 'fas fa-hourglass-half',
+                    label: 'Orientasi Masa Depan',
+                    text: 'Saya menjalani hidup hari ini dan tidak terlalu memikirkan masa depan',
+                    reverse: true
+                },
+                {
+                    id: 'q8',
+                    num: 8,
+                    icon: 'fas fa-user-check',
+                    label: 'Tanggung Jawab',
+                    text: 'Secara umum, saya merasa bertanggung jawab atas kondisi saya sekarang',
+                    reverse: false
+                },
+                {
+                    id: 'q9',
+                    num: 9,
+                    icon: 'fas fa-tasks',
+                    label: 'Manajemen Diri',
+                    text: 'Saya pandai dalam mengatur tanggung jawab harian saya',
+                    reverse: false
+                },
+                {
+                    id: 'q10',
+                    num: 10,
+                    icon: 'fas fa-flag-checkered',
+                    label: 'Pemenuhan Hidup',
+                    text: 'Kadang-kadang saya merasa bahwa saya telah melakukan semua yang harus saya lakukan dalam hidup',
+                    reverse: true
                 }
             ];
-            const SKRINING_CATEGORIES = [
-                { max: 4, label: 'Relatif Baik', color: '#10b981', bg: 'rgba(16,185,129,0.1)', border: 'rgba(16,185,129,0.3)', icon: 'fas fa-leaf', desc: 'Kondisi psikologismu saat ini relatif stabil. Pertahankan kebiasaan positifmu dan tetap jaga kesehatan mental secara proaktif.' },
-                { max: 9, label: 'Perlu Perhatian', color: '#f59e0b', bg: 'rgba(245,158,11,0.1)', border: 'rgba(245,158,11,0.3)', icon: 'fas fa-exclamation-circle', desc: 'Ada beberapa aspek yang perlu lebih kamu perhatikan. Coba lakukan self-care lebih aktif: istirahat cukup, olahraga ringan, dan cerita ke orang yang kamu percaya.' },
-                { max: 14, label: 'Perlu Dukungan', color: '#f97316', bg: 'rgba(249,115,22,0.1)', border: 'rgba(249,115,22,0.3)', icon: 'fas fa-hands-helping', desc: 'Kondisimu menunjukkan tanda-tanda yang perlu ditangani. Pertimbangkan untuk berbicara dengan konselor, teman dekat, atau bergabung ke peer support group di HIFZ.' },
-                { max: 18, label: 'Perlu Segera Bantuan', color: '#ef4444', bg: 'rgba(239,68,68,0.1)', border: 'rgba(239,68,68,0.3)', icon: 'fas fa-heart-pulse', desc: 'Kondisimu menunjukkan tanda-tanda yang memerlukan perhatian segera dari profesional. Jangan tunda — hubungi konselor kampus, psikolog, atau layanan krisis mental health.' }
+
+            // Pilihan Likert 1–7 (urutan dari Sangat Setuju ke Sangat Tidak Setuju)
+            const LIKERT_OPTIONS = [
+                { val: 1, text: 'Sangat Setuju',       color: '#10b981' },
+                { val: 2, text: 'Setuju',               color: '#34d399' },
+                { val: 3, text: 'Agak Setuju',          color: '#a3e635' },
+                { val: 4, text: 'Ragu-Ragu',            color: '#f59e0b' },
+                { val: 5, text: 'Agak Tidak Setuju',    color: '#f97316' },
+                { val: 6, text: 'Tidak Setuju',         color: '#ef4444' },
+                { val: 7, text: 'Sangat Tidak Setuju',  color: '#dc2626' }
             ];
-            let skriningAnswers = {};
+
+            // Fungsi reverse scoring: nilai pilihan (1–7) → skor aktual
+            function skriningScore(rawVal, isReverse) {
+                return isReverse ? (8 - rawVal) : rawVal;
+            }
+
+            // Kategori berdasarkan total skor 10–70
+            const SKRINING_CATEGORIES = [
+                { label: 'Rendah',  color: '#ef4444', bg: 'rgba(239,68,68,0.1)',    border: 'rgba(239,68,68,0.3)',    icon: 'fas fa-heart-pulse',       desc: 'Berdasarkan jawaban yang kamu berikan, skor kondisi mental hari ini berada pada kategori rendah. Ini bukan diagnosis, namun menjadi sinyal untuk memberikan perhatian lebih pada dirimu. Pertimbangkan untuk berbicara dengan orang yang kamu percaya atau konselor.' },
+                { label: 'Sedang', color: '#f59e0b', bg: 'rgba(245,158,11,0.1)',   border: 'rgba(245,158,11,0.3)',   icon: 'fas fa-exclamation-circle', desc: 'Berdasarkan jawaban yang kamu berikan, skor kondisi mental hari ini berada pada kategori sedang. Ada beberapa aspek yang bisa lebih diperhatikan. Jaga pola istirahat, luangkan waktu untuk diri sendiri, dan tetap terhubung dengan orang-orang terdekatmu.' },
+                { label: 'Tinggi', color: '#10b981', bg: 'rgba(16,185,129,0.1)',   border: 'rgba(16,185,129,0.3)',   icon: 'fas fa-leaf',               desc: 'Berdasarkan jawaban yang kamu berikan, skor kondisi mental hari ini berada pada kategori tinggi. Kondisimu saat ini tampak cukup baik. Pertahankan kebiasaan positifmu dan terus jaga keseimbangan hidup.' }
+            ];
+
+            function getSkriningCategory(totalScore) {
+                if (totalScore > 50) return SKRINING_CATEGORIES[2]; // Tinggi
+                if (totalScore > 30) return SKRINING_CATEGORIES[1]; // Sedang
+                return SKRINING_CATEGORIES[0];                        // Rendah
+            }
+
+            let skriningAnswers = {}; // { qId: rawVal (1–7) }
             let skriningCurrent = 0;
 
             window.mulaiSkrining = function() {
@@ -4165,16 +4193,18 @@
                 document.getElementById('skrining-progress-bar').style.width = ((skriningCurrent+1)/total*100) + '%';
                 document.getElementById('skrining-q-icon').className = q.icon;
                 document.getElementById('skrining-q-text').textContent = q.text;
-                document.getElementById('skrining-q-desc').textContent = q.desc;
+                // Tampilkan nomor soal + keterangan arah item
+                const dirLabel = q.reverse ? '(item negatif)' : '(item positif)';
+                document.getElementById('skrining-q-desc').textContent = 'Pernyataan ' + q.num + ' dari ' + total + ' · ' + dirLabel;
                 const prevBtn = document.getElementById('skrining-prev-btn');
                 const nextBtn = document.getElementById('skrining-next-btn');
                 prevBtn.style.display = skriningCurrent > 0 ? 'block' : 'none';
                 const opts = document.getElementById('skrining-options');
                 opts.innerHTML = '';
-                q.options.forEach(opt => {
+                LIKERT_OPTIONS.forEach(opt => {
                     const btn = document.createElement('button');
                     const isSelected = skriningAnswers[q.id] === opt.val;
-                    btn.style.cssText = `width:100%;padding:12px 16px;border-radius:12px;border:2px solid ${isSelected ? opt.color : 'rgba(139,92,246,0.15)'};background:${isSelected ? opt.color+'18' : 'white'};font-family:'Poppins',sans-serif;font-size:0.84rem;font-weight:${isSelected?'700':'500'};color:${isSelected ? opt.color : 'var(--text-dark)'};cursor:pointer;text-align:left;transition:all .25s;display:flex;align-items:center;gap:10px;`;
+                    btn.style.cssText = `width:100%;padding:10px 14px;border-radius:12px;border:2px solid ${isSelected ? opt.color : 'rgba(139,92,246,0.15)'};background:${isSelected ? opt.color+'18' : 'white'};font-family:'Poppins',sans-serif;font-size:0.82rem;font-weight:${isSelected?'700':'500'};color:${isSelected ? opt.color : 'var(--text-dark)'};cursor:pointer;text-align:left;transition:all .25s;display:flex;align-items:center;gap:10px;`;
                     btn.innerHTML = `<span style="width:20px;height:20px;border-radius:50%;border:2px solid ${opt.color};background:${isSelected ? opt.color : 'white'};display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">${isSelected ? '<i class="fas fa-check" style="color:white;font-size:9px;"></i>' : ''}</span>${opt.text}`;
                     btn.onclick = function() {
                         skriningAnswers[q.id] = opt.val;
@@ -4213,44 +4243,75 @@
             async function showSkriningResult() {
                 document.getElementById('skrining-question').style.display = 'none';
                 document.getElementById('skrining-result').style.display = 'block';
-                const total = Object.values(skriningAnswers).reduce((a,b)=>a+b,0);
-                const cat = total <= 4 ? SKRINING_CATEGORIES[0] : total <= 9 ? SKRINING_CATEGORIES[1] : total <= 14 ? SKRINING_CATEGORIES[2] : SKRINING_CATEGORIES[3];
+
+                // Hitung skor per item dengan reverse scoring
+                const itemScores = {};
+                SKRINING_QUESTIONS.forEach(q => {
+                    const rawVal = skriningAnswers[q.id] || 1;
+                    itemScores[q.id] = skriningScore(rawVal, q.reverse);
+                });
+
+                // Total skor (rentang 10–70)
+                const totalScore = Object.values(itemScores).reduce((a,b)=>a+b, 0);
+                const cat = getSkriningCategory(totalScore);
+
+                // Tanggal screening
+                const tanggalScreening = new Date().toLocaleDateString('id-ID', { day:'2-digit', month:'long', year:'numeric' });
+
                 document.getElementById('skrining-result-badge').style.cssText = `border-radius:20px;padding:24px;text-align:center;margin-bottom:20px;background:${cat.bg};border:2px solid ${cat.border};`;
                 document.getElementById('skrining-result-badge').innerHTML = `
                     <div style="width:56px;height:56px;background:${cat.color};border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;box-shadow:0 6px 20px ${cat.color}40;">
                         <i class="${cat.icon}" style="color:white;font-size:1.4rem;"></i>
                     </div>
-                    <div style="font-size:1.1rem;font-weight:800;color:${cat.color};margin-bottom:4px;">${cat.label}</div>
-                    <div style="font-size:0.75rem;color:var(--text-gray);">Skor total: ${total} dari 18</div>
+                    <div style="font-size:0.7rem;color:var(--text-light);margin-bottom:4px;">Kondisi Mental Hari Ini</div>
+                    <div style="font-size:1.2rem;font-weight:800;color:${cat.color};margin-bottom:6px;">${cat.label}</div>
+                    <div style="font-size:0.82rem;font-weight:700;color:${cat.color};">Skor: ${totalScore}/70</div>
+                    <div style="font-size:0.68rem;color:var(--text-light);margin-top:4px;">${tanggalScreening}</div>
                 `;
+
+                // Detail skor per item
                 const detailEl = document.getElementById('skrining-result-detail');
                 detailEl.innerHTML = '';
                 SKRINING_QUESTIONS.forEach(q => {
-                    const ans = skriningAnswers[q.id] || 0;
-                    const colors = ['#10b981','#f59e0b','#f97316','#ef4444'];
-                    const labels = ['Baik','Perlu Perhatian','Cukup Tinggi','Tinggi'];
+                    const rawVal = skriningAnswers[q.id] || 1;
+                    const scored = itemScores[q.id];
+                    const optLabel = LIKERT_OPTIONS.find(o => o.val === rawVal)?.text || '-';
+                    const optColor = LIKERT_OPTIONS.find(o => o.val === rawVal)?.color || '#64748b';
+                    const reverseTag = q.reverse ? '<span style="font-size:0.6rem;color:#8b5cf6;background:rgba(139,92,246,0.1);padding:1px 5px;border-radius:4px;margin-left:4px;">reverse</span>' : '';
                     detailEl.innerHTML += `
-                        <div style="background:white;border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:12px;border:1px solid rgba(0,0,0,0.06);">
-                            <i class="${q.icon}" style="color:${colors[ans]};width:20px;text-align:center;flex-shrink:0;"></i>
-                            <div style="flex:1;"><span style="font-size:0.8rem;font-weight:600;color:var(--text-dark);">${q.label}</span></div>
-                            <span style="font-size:0.72rem;padding:3px 10px;border-radius:50px;background:${colors[ans]}18;color:${colors[ans]};font-weight:700;">${labels[ans]}</span>
+                        <div style="background:white;border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:12px;border:1px solid rgba(0,0,0,0.06);">
+                            <i class="${q.icon}" style="color:${optColor};width:18px;text-align:center;flex-shrink:0;font-size:0.85rem;"></i>
+                            <div style="flex:1;min-width:0;">
+                                <div style="font-size:0.78rem;font-weight:600;color:var(--text-dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${q.num}. ${q.label}${reverseTag}</div>
+                                <div style="font-size:0.68rem;color:var(--text-gray);">${optLabel}</div>
+                            </div>
+                            <span style="font-size:0.75rem;padding:3px 10px;border-radius:50px;background:${optColor}18;color:${optColor};font-weight:800;flex-shrink:0;">${scored}</span>
                         </div>`;
                 });
+
                 document.getElementById('skrining-result-saran').innerHTML = `
-                    <p style="font-size:0.8rem;font-weight:700;color:var(--text-dark);margin-bottom:8px;"><i class="fas fa-lightbulb" style="color:#f59e0b;margin-right:6px;"></i>Saran</p>
+                    <p style="font-size:0.8rem;font-weight:700;color:var(--text-dark);margin-bottom:8px;"><i class="fas fa-lightbulb" style="color:#f59e0b;margin-right:6px;"></i>Hasil Screening</p>
                     <p style="font-size:0.82rem;color:var(--text-gray);line-height:1.7;">${cat.desc}</p>
-                    <p style="font-size:0.72rem;color:var(--text-light);margin-top:10px;"><i class="fas fa-info-circle" style="margin-right:4px;"></i>Skrining ini bukan diagnosis medis. Untuk diagnosis dan penanganan, konsultasikan ke profesional kesehatan mental.</p>
+                    <p style="font-size:0.72rem;color:var(--text-light);margin-top:10px;"><i class="fas fa-info-circle" style="margin-right:4px;"></i>Hasil screening ini bukan diagnosis medis atau psikologis. Untuk konsultasi lebih lanjut, hubungi profesional kesehatan mental.</p>
                 `;
+
                 // Simpan hasil skrining ke Supabase jika sudah login
                 try {
                     const { data: { session } } = await _sb.auth.getSession();
                     if (session) {
                         const uid = session.user.id;
+                        // Simpan: tanggal, jawaban raw, skor per item, total skor, kategori
                         const detail = {};
-                        SKRINING_QUESTIONS.forEach(q => { detail[q.id] = skriningAnswers[q.id] ?? 0; });
+                        SKRINING_QUESTIONS.forEach(q => {
+                            detail[q.id] = {
+                                jawaban: skriningAnswers[q.id] ?? 1,
+                                skor: itemScores[q.id],
+                                reverse: q.reverse
+                            };
+                        });
                         await _sb.from('hn_skrining_results').insert({
                             user_id: uid,
-                            skor: total,
+                            skor: totalScore,
                             kategori: cat.label,
                             detail
                         });
@@ -4963,36 +5024,14 @@
                     </div>
                     <div class="hub-subcard-body">
                         <h3>Skrining Kesehatan Mental</h3>
-                        <p>Jawab pertanyaan singkat seputar stres, kecemasan, tidur, energi, dan relasi sosialmu untuk mengetahui kondisi psikologis saat ini secara lebih mendalam.</p>
+                        <p>Jawab 10 pernyataan dengan skala Likert 1–7 untuk mengetahui kondisi mental hari ini. Skor dihitung setelah semua pernyataan selesai dijawab.</p>
                     </div>
                     <div class="hub-subcard-arrow" style="background:rgba(139,92,246,0.1);color:#8b5cf6;">
                         <i class="fas fa-arrow-right"></i>
                     </div>
                 </div>
-                <div class="hub-subcard" onclick="hubGoTo('fitur-b','moodSwitchTab','grafik');">
-                    <div class="hub-subcard-icon" style="background:linear-gradient(135deg,#6366f1,#4f46e5);">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <div class="hub-subcard-body">
-                        <h3>Grafik Perkembangan Emosi</h3>
-                        <p>Data moodmu ditampilkan dalam grafik interaktif agar pola stres maupun peningkatan kondisi emosional bisa diamati dengan mudah dari waktu ke waktu.</p>
-                    </div>
-                    <div class="hub-subcard-arrow" style="background:rgba(99,102,241,0.1);color:#6366f1;">
-                        <i class="fas fa-arrow-right"></i>
-                    </div>
-                </div>
-                <div class="hub-subcard" onclick="hubGoTo('fitur-b','moodSwitchTab','journal');">
-                    <div class="hub-subcard-icon" style="background:linear-gradient(135deg,#8b5cf6,#a78bfa);">
-                        <i class="fas fa-journal-whills"></i>
-                    </div>
-                    <div class="hub-subcard-body">
-                        <h3>HIFZ Journal</h3>
-                        <p>Ekspresikan kondisimu secara terstruktur: apa yang dirasakan, terjadi, dipikirkan, dan dilakukan. Journaling berbasis pendekatan CBT yang membantu pemrosesan emosi.</p>
-                    </div>
-                    <div class="hub-subcard-arrow" style="background:rgba(139,92,246,0.1);color:#8b5cf6;">
-                        <i class="fas fa-arrow-right"></i>
-                    </div>
-                </div>
+
+
                 <div class="hub-subcard" onclick="hubGoTo('fitur-b','moodSwitchTab','refleksi');">
                     <div class="hub-subcard-icon" style="background:linear-gradient(135deg,#a78bfa,#8b5cf6);">
                         <i class="fas fa-book-open"></i>
@@ -5220,11 +5259,11 @@
             <div class="hub-sublist">
                 <div class="hub-subcard" onclick="hubGoTo('fitur-a','kolabSwitchTab','forum');" style="border-color:rgba(236,72,153,0.12);">
                     <div class="hub-subcard-icon" style="background:linear-gradient(135deg,#ec4899,#f43f5e);">
-                        <i class="fas fa-comments"></i>
+                        <i class="fas fa-hands-helping"></i>
                     </div>
                     <div class="hub-subcard-body">
-                        <h3>Forum Diskusi Komunitas</h3>
-                        <p>Berdiskusi mengenai tekanan akademik, relasi sosial, produktivitas, maupun kehidupan digital dalam ruang yang aman dan moderatif. Setiap suara dihargai.</p>
+                        <h3>Peer Support Group</h3>
+                        <p>Bergabung ke kelompok dukungan sebaya berbasis minat dalam ruang yang aman dan moderatif. Tumbuh bersama teman sebaya.</p>
                     </div>
                     <div class="hub-subcard-arrow" style="background:rgba(236,72,153,0.1);color:#ec4899;">
                         <i class="fas fa-arrow-right"></i>
@@ -5242,30 +5281,7 @@
                         <i class="fas fa-arrow-right"></i>
                     </div>
                 </div>
-                <div class="hub-subcard" onclick="hubGoTo('fitur-a','kolabSwitchTab','group');" style="border-color:rgba(236,72,153,0.12);">
-                    <div class="hub-subcard-icon" style="background:linear-gradient(135deg,#db2777,#ec4899);">
-                        <i class="fas fa-hand-holding-heart"></i>
-                    </div>
-                    <div class="hub-subcard-body">
-                        <h3>Peer Support Group</h3>
-                        <p>Kelompok kecil berbasis minat atau kebutuhan tertentu untuk menciptakan dukungan sosial yang lebih dekat dan kolaboratif bersama sesama yang memahami.</p>
-                    </div>
-                    <div class="hub-subcard-arrow" style="background:rgba(236,72,153,0.1);color:#ec4899;">
-                        <i class="fas fa-arrow-right"></i>
-                    </div>
-                </div>
-                <div class="hub-subcard" onclick="hubGoTo('fitur-a','kolabSwitchTab','eksternal');" style="border-color:rgba(139,92,246,0.12);">
-                    <div class="hub-subcard-icon" style="background:linear-gradient(135deg,#7c3aed,#8b5cf6);">
-                        <i class="fas fa-globe"></i>
-                    </div>
-                    <div class="hub-subcard-body">
-                        <h3>Komunitas Eksternal</h3>
-                        <p>Terhubung langsung ke komunitas mental health Indonesia yang sudah aktif — Discord, WhatsApp, grup Facebook, dan Twitter dari organisasi terpercaya.</p>
-                    </div>
-                    <div class="hub-subcard-arrow" style="background:rgba(139,92,246,0.1);color:#8b5cf6;">
-                        <i class="fas fa-arrow-right"></i>
-                    </div>
-                </div>
+
             </div>
         </div>
     </div>
@@ -5290,43 +5306,29 @@
                 <div id="kolaborasiApp" class="u-ff-pop">
                     <!-- Inline Tab Bar -->
                     <div style="display:flex;overflow-x:auto;border-bottom:1px solid rgba(13,148,136,0.12);background:white;position:sticky;top:0;z-index:10;scrollbar-width:none;-webkit-overflow-scrolling:touch;">
-                        <button id="ktab-forum" onclick="kolabSwitchTab('forum')" style="flex:1;min-width:0;padding:12px 10px;border:none;background:none;font-family:'Poppins',sans-serif;font-size:0.72rem;font-weight:600;cursor:pointer;color:var(--primary);border-bottom:3px solid var(--primary);transition:all .25s;white-space:nowrap;"><i class="fas fa-comments" style="margin-right:4px;"></i>Forum</button>
+                        <button id="ktab-forum" onclick="kolabSwitchTab('forum')" style="flex:1;min-width:0;padding:12px 10px;border:none;background:none;font-family:'Poppins',sans-serif;font-size:0.72rem;font-weight:600;cursor:pointer;color:var(--primary);border-bottom:3px solid var(--primary);transition:all .25s;white-space:nowrap;"><i class="fas fa-hands-helping" style="margin-right:4px;"></i>Peer Support</button>
                         <button id="ktab-anonim" onclick="kolabSwitchTab('anonim')" style="flex:1;min-width:0;padding:12px 10px;border:none;background:none;font-family:'Poppins',sans-serif;font-size:0.72rem;font-weight:600;cursor:pointer;color:var(--text-gray);border-bottom:3px solid transparent;transition:all .25s;white-space:nowrap;"><i class="fas fa-mask" style="margin-right:4px;"></i>Anonim</button>
-                        <button id="ktab-group" onclick="kolabSwitchTab('group')" style="flex:1;min-width:0;padding:12px 10px;border:none;background:none;font-family:'Poppins',sans-serif;font-size:0.72rem;font-weight:600;cursor:pointer;color:var(--text-gray);border-bottom:3px solid transparent;transition:all .25s;white-space:nowrap;"><i class="fas fa-users" style="margin-right:4px;"></i>Peer Group</button>
-                        <button id="ktab-eksternal" onclick="kolabSwitchTab('eksternal')" style="flex:1;min-width:0;padding:12px 10px;border:none;background:none;font-family:'Poppins',sans-serif;font-size:0.72rem;font-weight:600;cursor:pointer;color:var(--text-gray);border-bottom:3px solid transparent;transition:all .25s;white-space:nowrap;"><i class="fas fa-globe" style="margin-right:4px;color:#8b5cf6;"></i>Komunitas</button>
+
                     </div>
                     <div id="kpanel-forum" style="padding:18px 16px;background:linear-gradient(135deg,#f0fdfa,#f8fffe);">
-                        <p style="font-size:0.82rem;font-weight:700;color:var(--text-dark);margin-bottom:4px;"><i class="far fa-comments" style="margin-right:6px;"></i>Forum Diskusi Komunitas</p>
-                        <p style="font-size:0.75rem;color:var(--text-gray);margin-bottom:14px;">Ruang aman untuk diskusi tentang akademik, relasi sosial, produktivitas, dan kehidupan digital.</p>
+                        <!-- BAGIAN: PEER SUPPORT GROUP -->
+                        <p style="font-size:0.82rem;font-weight:700;color:var(--text-dark);margin-bottom:4px;"><i class="fas fa-hands-helping" style="margin-right:6px;"></i>Peer Support Group</p>
+                        <p style="font-size:0.75rem;color:var(--text-gray);margin-bottom:14px;">Kelompok kecil berbasis minat atau kebutuhan. Temukan komunitasmu dan tumbuh bersama.</p>
 
-                        <!-- Kategori Filter -->
-                        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;" id="forumCatFilter">
-                            <button onclick="filterForum(this,'semua')" class="kforum-cat active-cat" data-cat="semua" style="padding:5px 14px;border-radius:50px;border:1.5px solid var(--primary);background:var(--primary);color:white;font-size:0.7rem;font-weight:600;cursor:pointer;transition:all .25s;font-family:'Poppins',sans-serif;">Semua</button>
-                            <button onclick="filterForum(this,'akademik')" class="kforum-cat" data-cat="akademik" style="padding:5px 14px;border-radius:50px;border:1.5px solid rgba(13,148,136,0.3);background:white;color:var(--text-gray);font-size:0.7rem;font-weight:600;cursor:pointer;transition:all .25s;font-family:'Poppins',sans-serif;"><i class="fas fa-graduation-cap" style="margin-right:4px;"></i>Akademik</button>
-                            <button onclick="filterForum(this,'relasi')" class="kforum-cat" data-cat="relasi" style="padding:5px 14px;border-radius:50px;border:1.5px solid rgba(13,148,136,0.3);background:white;color:var(--text-gray);font-size:0.7rem;font-weight:600;cursor:pointer;transition:all .25s;font-family:'Poppins',sans-serif;"><i class="fas fa-heart" style="margin-right:4px;"></i>Relasi Sosial</button>
-                            <button onclick="filterForum(this,'produktivitas')" class="kforum-cat" data-cat="produktivitas" style="padding:5px 14px;border-radius:50px;border:1.5px solid rgba(13,148,136,0.3);background:white;color:var(--text-gray);font-size:0.7rem;font-weight:600;cursor:pointer;transition:all .25s;font-family:'Poppins',sans-serif;"><i class="fas fa-bolt" style="margin-right:4px;"></i>Produktivitas</button>
-                            <button onclick="filterForum(this,'digital')" class="kforum-cat" data-cat="digital" style="padding:5px 14px;border-radius:50px;border:1.5px solid rgba(13,148,136,0.3);background:white;color:var(--text-gray);font-size:0.7rem;font-weight:600;cursor:pointer;transition:all .25s;font-family:'Poppins',sans-serif;"><i class="fas fa-mobile-alt" style="margin-right:4px;"></i>Digital</button>
-                        </div>
+                        <!-- Group List -->
+                        <div id="peerGroupList" style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px;"></div>
 
-                        <!-- Thread List -->
-                        <div id="forumThreadList" style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px;"></div>
-
-                        <!-- Post New Thread -->
+                        <!-- Buat Group Baru -->
                         <div style="background:white;border-radius:14px;padding:16px;border:1.5px solid rgba(13,148,136,0.15);">
-                            <p style="font-size:0.78rem;font-weight:700;color:var(--text-dark);margin-bottom:10px;"><i class="fas fa-pen" style="color:var(--primary);margin-right:6px;"></i>Mulai diskusi baru</p>
-                            <textarea id="forumNewPost" placeholder="Tulis topik atau pertanyaanmu di sini..." style="width:100%;height:70px;border:1.5px solid rgba(13,148,136,0.2);border-radius:10px;padding:10px 12px;font-family:'Poppins',sans-serif;font-size:0.8rem;color:var(--text-dark);resize:none;outline:none;transition:border .3s;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='rgba(13,148,136,0.2)'"></textarea>
-                            <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;align-items:center;">
-                                <select id="forumNewCat" style="padding:7px 12px;border-radius:50px;border:1.5px solid rgba(13,148,136,0.2);font-family:'Poppins',sans-serif;font-size:0.75rem;color:var(--text-dark);outline:none;cursor:pointer;">
-                                    <option value="Akademik"><i class="fas fa-graduation-cap" style="margin-right:4px;"></i>Akademik</option>
-                                    <option value="Relasi Sosial"><i class="fas fa-heart" style="margin-right:4px;"></i>Relasi Sosial</option>
-                                    <option value="Produktivitas"><i class="fas fa-bolt" style="margin-right:4px;"></i>Produktivitas</option>
-                                    <option value="Digital"><i class="fas fa-mobile-alt" style="margin-right:4px;"></i>Digital</option>
-                                </select>
-                                <button onclick="postForumThread()" style="background:var(--gradient-1);color:white;border:none;padding:8px 20px;border-radius:50px;font-family:'Poppins',sans-serif;font-size:0.78rem;font-weight:600;cursor:pointer;transition:all .3s;margin-left:auto;">
-                                    <i class="fas fa-paper-plane" style="margin-right:5px;"></i>Kirim
+                            <p style="font-size:0.78rem;font-weight:700;color:var(--text-dark);margin-bottom:10px;"><i class="fas fa-plus-circle" style="color:var(--primary);margin-right:6px;"></i>Buat grup baru</p>
+                            <input id="newGroupName" type="text" placeholder="Nama grup, misal: Belajar Bareng Fokus..." style="width:100%;padding:10px 14px;border:1.5px solid rgba(13,148,136,0.2);border-radius:10px;font-family:'Poppins',sans-serif;font-size:0.8rem;color:var(--text-dark);outline:none;transition:border .3s;margin-bottom:8px;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='rgba(13,148,136,0.2)'" />
+                            <input id="newGroupDesc" type="text" placeholder="Deskripsi singkat tujuan grup..." style="width:100%;padding:10px 14px;border:1.5px solid rgba(13,148,136,0.2);border-radius:10px;font-family:'Poppins',sans-serif;font-size:0.8rem;color:var(--text-dark);outline:none;transition:border .3s;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='rgba(13,148,136,0.2)'" />
+                            <div style="display:flex;margin-top:10px;">
+                                <button onclick="buatPeerGroup()" style="background:var(--gradient-1);color:white;border:none;padding:9px 22px;border-radius:50px;font-family:'Poppins',sans-serif;font-size:0.78rem;font-weight:600;cursor:pointer;transition:all .3s;margin-left:auto;">
+                                    <i class="fas fa-users" style="margin-right:5px;"></i>Buat Grup
                                 </button>
                             </div>
-                            <div id="forumPostMsg" style="font-size:0.72rem;color:var(--primary);margin-top:6px;min-height:16px;"></div>
+                            <div id="groupMsg" style="font-size:0.72rem;color:var(--primary);margin-top:6px;min-height:16px;"></div>
                         </div>
                     </div>
                     <div id="kpanel-anonim" style="padding:18px 16px;display:none;background:linear-gradient(135deg,#fafafa,#f1f5f9);">
@@ -5361,102 +5363,7 @@
                             <div id="anonMsg" style="font-size:0.72rem;color:#64748b;margin-top:8px;min-height:16px;"></div>
                         </div>
                     </div>
-                    <div id="kpanel-group" style="padding:18px 16px;display:none;background:linear-gradient(135deg,#f0fdf4,#f0fdfa);">
-                        <p style="font-size:0.82rem;font-weight:700;color:var(--text-dark);margin-bottom:4px;"><i class="fas fa-hands-helping" style="margin-right:6px;"></i>Peer Support Group</p>
-                        <p style="font-size:0.75rem;color:var(--text-gray);margin-bottom:14px;">Kelompok kecil berbasis minat atau kebutuhan. Temukan komunitasmu dan tumbuh bersama.</p>
 
-                        <!-- Group List -->
-                        <div id="peerGroupList" style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px;"></div>
-
-                        <!-- Buat Group Baru -->
-                        <div style="background:white;border-radius:14px;padding:16px;border:1.5px solid rgba(13,148,136,0.15);">
-                            <p style="font-size:0.78rem;font-weight:700;color:var(--text-dark);margin-bottom:10px;"><i class="fas fa-plus-circle" style="color:var(--primary);margin-right:6px;"></i>Buat grup baru</p>
-                            <input id="newGroupName" type="text" placeholder="Nama grup, misal: Belajar Bareng Fokus..." style="width:100%;padding:10px 14px;border:1.5px solid rgba(13,148,136,0.2);border-radius:10px;font-family:'Poppins',sans-serif;font-size:0.8rem;color:var(--text-dark);outline:none;transition:border .3s;margin-bottom:8px;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='rgba(13,148,136,0.2)'" />
-                            <input id="newGroupDesc" type="text" placeholder="Deskripsi singkat tujuan grup..." style="width:100%;padding:10px 14px;border:1.5px solid rgba(13,148,136,0.2);border-radius:10px;font-family:'Poppins',sans-serif;font-size:0.8rem;color:var(--text-dark);outline:none;transition:border .3s;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='rgba(13,148,136,0.2)'" />
-                            <div style="display:flex;margin-top:10px;">
-                                <button onclick="buatPeerGroup()" style="background:var(--gradient-1);color:white;border:none;padding:9px 22px;border-radius:50px;font-family:'Poppins',sans-serif;font-size:0.78rem;font-weight:600;cursor:pointer;transition:all .3s;margin-left:auto;">
-                                    <i class="fas fa-users" style="margin-right:5px;"></i>Buat Grup
-                                </button>
-                            </div>
-                            <div id="groupMsg" style="font-size:0.72rem;color:var(--primary);margin-top:6px;min-height:16px;"></div>
-                        </div>
-                    </div>
-                <!-- KOMUNITAS EKSTERNAL PANEL -->
-                <div id="kpanel-eksternal" style="padding:18px 16px;display:none;background:linear-gradient(135deg,#f5f3ff,#ede9fe);">
-                    <p style="font-size:0.82rem;font-weight:700;color:var(--text-dark);margin-bottom:4px;"><i class="fas fa-globe" style="margin-right:6px;color:#8b5cf6;"></i>Komunitas Eksternal</p>
-                    <p style="font-size:0.75rem;color:var(--text-gray);margin-bottom:14px;">Bergabung ke komunitas mental health Indonesia yang aktif. Tap ikon platform untuk terhubung.</p>
-
-                    <!-- Organisasi terpercaya -->
-                    <div style="display:flex;flex-direction:column;gap:12px;">
-
-                        <!-- Into The Light -->
-                        <div style="background:white;border-radius:14px;padding:16px;border:1.5px solid rgba(139,92,246,0.12);box-shadow:0 2px 10px rgba(0,0,0,0.04);">
-                            <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
-                                <div style="width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#6d28d9,#7c3aed);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                    <i class="fas fa-sun" style="color:white;font-size:1.1rem;"></i>
-                                </div>
-                                <div>
-                                    <p style="font-size:0.85rem;font-weight:700;color:var(--text-dark);">Into The Light Indonesia</p>
-                                    <p style="font-size:0.68rem;color:var(--text-light);">Pencegahan bunuh diri &amp; kesehatan mental remaja</p>
-                                </div>
-                            </div>
-                            <p class="ext-org-desc" style="font-size:0.75rem;color:var(--text-gray);line-height:1.6;margin-bottom:12px;">Organisasi terdepan di Indonesia untuk pencegahan bunuh diri. Menyediakan edukasi, pelatihan, dan dukungan komunitas aktif.</p>
-                            <div style="display:flex;gap:8px;flex-wrap:wrap;">
-                                <a href="https://www.intothelightid.org" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:50px;background:#6d28d9;color:white;text-decoration:none;font-size:0.72rem;font-weight:600;"><i class="fas fa-globe"></i>Website</a>
-                                <a href="https://www.instagram.com/intothelightid" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:50px;background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);color:white;text-decoration:none;font-size:0.72rem;font-weight:600;"><i class="fab fa-instagram"></i>Instagram</a>
-                                <a href="https://twitter.com/IntoTheLightID" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:50px;background:#1DA1F2;color:white;text-decoration:none;font-size:0.72rem;font-weight:600;"><i class="fab fa-twitter"></i>Twitter</a>
-                            </div>
-                        </div>
-
-                        <!-- Yayasan Pulih -->
-                        <div style="background:white;border-radius:14px;padding:16px;border:1.5px solid rgba(139,92,246,0.12);box-shadow:0 2px 10px rgba(0,0,0,0.04);">
-                            <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
-                                <div style="width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#0d9488,#06b6d4);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                    <i class="fas fa-heart-pulse" style="color:white;font-size:1.1rem;"></i>
-                                </div>
-                                <div>
-                                    <p style="font-size:0.85rem;font-weight:700;color:var(--text-dark);">Yayasan Pulih</p>
-                                    <p style="font-size:0.68rem;color:var(--text-light);">Pemulihan trauma &amp; dukungan psikologis</p>
-                                </div>
-                            </div>
-                            <p class="ext-org-desc" style="font-size:0.75rem;color:var(--text-gray);line-height:1.6;margin-bottom:12px;">Pusat layanan psikologi berbasis komunitas. Aktif memberikan pelatihan, konseling, dan membangun resiliensi masyarakat.</p>
-                            <div style="display:flex;gap:8px;flex-wrap:wrap;">
-                                <a href="https://yayasanpulih.org" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:50px;background:#0d9488;color:white;text-decoration:none;font-size:0.72rem;font-weight:600;"><i class="fas fa-globe"></i>Website</a>
-                                <a href="https://www.instagram.com/yayasanpulih" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:50px;background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);color:white;text-decoration:none;font-size:0.72rem;font-weight:600;"><i class="fab fa-instagram"></i>Instagram</a>
-                                <a href="https://www.facebook.com/yayasanpulih" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:50px;background:#1877F2;color:white;text-decoration:none;font-size:0.72rem;font-weight:600;"><i class="fab fa-facebook-f"></i>Facebook</a>
-                            </div>
-                        </div>
-
-                        <!-- Sejiwa -->
-                        <div style="background:white;border-radius:14px;padding:16px;border:1.5px solid rgba(139,92,246,0.12);box-shadow:0 2px 10px rgba(0,0,0,0.04);">
-                            <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
-                                <div style="width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#f59e0b,#f97316);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                    <i class="fas fa-seedling" style="color:white;font-size:1.1rem;"></i>
-                                </div>
-                                <div>
-                                    <p style="font-size:0.85rem;font-weight:700;color:var(--text-dark);">Yayasan Sejiwa</p>
-                                    <p style="font-size:0.68rem;color:var(--text-light);">Anti-bullying &amp; kesehatan jiwa anak-remaja</p>
-                                </div>
-                            </div>
-                            <p class="ext-org-desc" style="font-size:0.75rem;color:var(--text-gray);line-height:1.6;margin-bottom:12px;">Fokus pada pencegahan perundungan dan pengembangan karakter positif remaja Indonesia. Komunitas aktif di berbagai platform.</p>
-                            <div style="display:flex;gap:8px;flex-wrap:wrap;">
-                                <a href="https://www.sejiwa.org" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:50px;background:#f59e0b;color:white;text-decoration:none;font-size:0.72rem;font-weight:600;"><i class="fas fa-globe"></i>Website</a>
-                                <a href="https://www.instagram.com/yayasansejiwa" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:50px;background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);color:white;text-decoration:none;font-size:0.72rem;font-weight:600;"><i class="fab fa-instagram"></i>Instagram</a>
-                                <a href="https://www.facebook.com/yayasansejiwa" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:50px;background:#1877F2;color:white;text-decoration:none;font-size:0.72rem;font-weight:600;"><i class="fab fa-facebook-f"></i>Facebook</a>
-                            </div>
-                        </div>
-
-                        <!-- Hotline Darurat -->
-                        <div style="background:linear-gradient(135deg,#fef2f2,#fee2e2);border-radius:14px;padding:16px;border:1.5px solid rgba(239,68,68,0.2);">
-                            <p style="font-size:0.78rem;font-weight:700;color:#dc2626;margin-bottom:8px;"><i class="fas fa-phone-volume" style="margin-right:6px;"></i>Butuh bantuan segera?</p>
-                            <p style="font-size:0.72rem;color:#7f1d1d;line-height:1.6;margin-bottom:12px;">Jika kamu atau orang di sekitarmu sedang dalam krisis, hubungi layanan berikut segera:</p>
-                            <div style="display:flex;gap:8px;flex-wrap:wrap;">
-                                <a href="tel:119" style="display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:50px;background:#dc2626;color:white;text-decoration:none;font-size:0.75rem;font-weight:700;"><i class="fas fa-phone"></i>119 ext 8</a>
-                                <a href="https://wa.me/6281380073120" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:50px;background:#25D366;color:white;text-decoration:none;font-size:0.75rem;font-weight:700;"><i class="fab fa-whatsapp"></i>WA Crisis Line</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
                 </div>
             </div>
@@ -5505,6 +5412,15 @@
         //   created_at timestamptz default now(),
         //   hearts int default 0
         // );
+        // create table hn_anon_replies (
+        //   id bigserial primary key,
+        //   story_id bigint references hn_anon_stories(id) on delete cascade,
+        //   content text not null,
+        //   created_at timestamptz default now()
+        // );
+        // alter table hn_anon_replies enable row level security;
+        // create policy "read anon replies" on hn_anon_replies for select using (true);
+        // create policy "insert anon replies" on hn_anon_replies for insert with check (true);
         // create table hn_peer_groups (
         //   id bigserial primary key,
         //   icon text default 'fa-users',
@@ -6077,7 +5993,8 @@
             if (!el) return;
             el.innerHTML = '<p style="font-size:0.75rem;color:var(--text-light);text-align:center;padding:16px;">Memuat cerita...</p>';
             const data = await sbGet('hn_anon_stories', { select:'*', order:'created_at.desc', limit:20 });
-            _anonData = Array.isArray(data) ? data : [];
+            _anonData = Array.isArray(data) ? data.map(s => ({...s, _replies:[]})) : [];
+            await loadAllAnonReplies();
             renderAnonStories();
         }
 
@@ -6099,14 +6016,98 @@
                         </div>
                     </div>
                     <p style="font-size:0.82rem;color:var(--text-dark);line-height:1.7;font-style:italic;margin-bottom:12px;">"${escHtml(s.content)}"</p>
-                    <div style="display:flex;align-items:center;gap:16px;">
+                    <!-- Replies -->
+                    <div id="anonReplies-${s.id}" style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px;">
+                        ${(s._replies||[]).map(r=>`
+                        <div style="background:#f8fafc;border-radius:10px;padding:10px 12px;border-left:3px solid #64748b;">
+                            <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+                                <div style="width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#64748b,#475569);display:flex;align-items:center;justify-content:center;color:white;font-size:9px;flex-shrink:0;"><i class="fas fa-mask"></i></div>
+                                <span style="font-size:0.65rem;font-weight:600;color:#64748b;">Anonim</span>
+                                <span style="font-size:0.6rem;color:var(--text-light);">${relativeTime(r.created_at)}</span>
+                            </div>
+                            <p style="font-size:0.78rem;color:var(--text-dark);line-height:1.6;margin:0;">${escHtml(r.content)}</p>
+                        </div>`).join('')}
+                    </div>
+                    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
                         <button onclick="supportAnon(${s.id},this)" style="display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:50px;border:1.5px solid rgba(236,72,153,0.25);background:white;font-family:'Poppins',sans-serif;font-size:0.72rem;font-weight:600;color:#ec4899;cursor:pointer;transition:all .25s;" id="heartBtn-${s.id}">
                             <i class="fas fa-heart"></i> <span id="heartCount-${s.id}">${s.hearts}</span>
                         </button>
-                        <span style="font-size:0.68rem;color:var(--text-light);"><i class="fas fa-hands-holding-heart" style="margin-right:4px;color:var(--primary);"></i>${s.hearts} orang memberi dukungan</span>
+                        <button onclick="toggleAnonReply(${s.id})" style="display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:50px;border:1.5px solid rgba(100,116,139,0.2);background:white;font-family:'Poppins',sans-serif;font-size:0.72rem;font-weight:600;color:#64748b;cursor:pointer;transition:all .25s;">
+                            <i class="fas fa-reply"></i> Balas
+                        </button>
+                    </div>
+                    <!-- Reply input (tersembunyi, toggle) -->
+                    <div id="anonReplyBox-${s.id}" style="display:none;margin-top:10px;">
+                        <div style="display:flex;gap:8px;align-items:flex-end;">
+                            <div style="width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#64748b,#475569);display:flex;align-items:center;justify-content:center;color:white;font-size:9px;flex-shrink:0;margin-bottom:2px;"><i class="fas fa-mask"></i></div>
+                            <textarea id="anonReplyInput-${s.id}" placeholder="Tulis balasan anonim..." maxlength="300" style="flex:1;height:60px;border:1.5px solid rgba(100,116,139,0.25);border-radius:10px;padding:8px 10px;font-family:'Poppins',sans-serif;font-size:0.78rem;color:var(--text-dark);resize:none;outline:none;transition:border .3s;" onfocus="this.style.borderColor='#64748b'" onblur="this.style.borderColor='rgba(100,116,139,0.25)'"></textarea>
+                            <button onclick="kirimAnonReply(${s.id})" style="flex-shrink:0;padding:8px 14px;border-radius:50px;background:linear-gradient(135deg,#64748b,#475569);color:white;border:none;font-family:'Poppins',sans-serif;font-size:0.72rem;font-weight:600;cursor:pointer;transition:all .3s;align-self:flex-end;">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                        <div id="anonReplyMsg-${s.id}" style="font-size:0.68rem;color:#64748b;margin-top:5px;min-height:14px;"></div>
                     </div>
                 </div>
             `).join('');
+        }
+
+        window.toggleAnonReply = function(storyId) {
+            const box = document.getElementById('anonReplyBox-' + storyId);
+            if (!box) return;
+            const isHidden = box.style.display === 'none';
+            box.style.display = isHidden ? 'block' : 'none';
+            if (isHidden) {
+                const ta = document.getElementById('anonReplyInput-' + storyId);
+                if (ta) ta.focus();
+            }
+        };
+
+        window.kirimAnonReply = async function(storyId) {
+            const ta = document.getElementById('anonReplyInput-' + storyId);
+            const msg = document.getElementById('anonReplyMsg-' + storyId);
+            if (!ta || !msg) return;
+            const txt = ta.value.trim();
+            if (!txt) { msg.style.color='#ef4444'; msg.textContent='Tulis balasanmu dulu ya!'; return; }
+            msg.style.color='#64748b'; msg.textContent='Mengirim...';
+            const res = await sbPost('hn_anon_replies', { story_id: storyId, content: txt });
+            if (res) {
+                ta.value = '';
+                msg.textContent = 'Balasanmu terkirim secara anonim.';
+                setTimeout(() => { msg.textContent=''; }, 3000);
+                // Muat ulang replies untuk cerita ini
+                await loadRepliesForStory(storyId);
+            } else {
+                msg.style.color='#ef4444'; msg.textContent='Gagal kirim. Coba lagi.';
+            }
+        };
+
+        async function loadRepliesForStory(storyId) {
+            const data = await sbGet('hn_anon_replies', { select:'*', story_id:'eq.'+storyId, order:'created_at.asc', limit:20 });
+            const story = _anonData.find(s => s.id === storyId);
+            if (story) story._replies = Array.isArray(data) ? data : [];
+            // Re-render hanya bagian replies
+            const repliesEl = document.getElementById('anonReplies-' + storyId);
+            if (!repliesEl) return;
+            const replies = story._replies || [];
+            repliesEl.innerHTML = replies.map(r=>`
+                <div style="background:#f8fafc;border-radius:10px;padding:10px 12px;border-left:3px solid #64748b;">
+                    <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+                        <div style="width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#64748b,#475569);display:flex;align-items:center;justify-content:center;color:white;font-size:9px;flex-shrink:0;"><i class="fas fa-mask"></i></div>
+                        <span style="font-size:0.65rem;font-weight:600;color:#64748b;">Anonim</span>
+                        <span style="font-size:0.6rem;color:var(--text-light);">${relativeTime(r.created_at)}</span>
+                    </div>
+                    <p style="font-size:0.78rem;color:var(--text-dark);line-height:1.6;margin:0;">${escHtml(r.content)}</p>
+                </div>`).join('');
+        }
+
+        async function loadAllAnonReplies() {
+            if (!_anonData.length) return;
+            const ids = _anonData.map(s => s.id);
+            // Muat replies untuk semua story sekaligus
+            const data = await sbGet('hn_anon_replies', { select:'*', order:'created_at.asc', limit:200 });
+            if (!Array.isArray(data)) return;
+            // Kelompokkan per story_id
+            _anonData.forEach(s => { s._replies = data.filter(r => r.story_id === s.id); });
         }
 
         window.supportAnon = async function(id, btn) {
@@ -6327,7 +6328,9 @@
         // TAB SWITCHER
         // ============================================================
         window.kolabSwitchTab = function(tab) {
-            ['forum','anonim','group','eksternal'].forEach(t => {
+            // 'group' sudah digabung ke dalam 'forum', redirect ke forum
+            if (tab === 'group') tab = 'forum';
+            ['forum','anonim'].forEach(t => {
                 const panel = document.getElementById('kpanel-'+t);
                 if (panel) panel.style.display = t===tab ? 'block' : 'none';
                 const btn = document.getElementById('ktab-'+t);
@@ -6490,22 +6493,7 @@
                             <div id="streakRow" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
                         </div>
                     </div>
-                    <div id="panel-grafik" style="padding:32px;display:none;background:#fff;">
-                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px;">
-                            <div>
-                                <p style="font-size:1rem;font-weight:700;color:var(--text-dark);">Perkembangan Emosi</p>
-                                <p style="font-size:0.78rem;color:var(--text-gray);">7 hari terakhir</p>
-                            </div>
-                            <div style="display:flex;gap:16px;font-size:0.75rem;color:var(--text-gray);align-items:center;">
-                                <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#8b5cf6;margin-right:5px;"></span>Mood</span>
-                                <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#0d9488;margin-right:5px;"></span>Resiliensi</span>
-                            </div>
-                        </div>
-                        <div style="position:relative;height:220px;">
-                            <canvas id="moodMiniChart"></canvas>
-                        </div>
-                        <div id="moodSummaryRow" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:20px;"></div>
-                    </div>
+
                     <div id="panel-refleksi" style="padding:32px;display:none;background:linear-gradient(135deg,#faf5ff,#f5f3ff);">
                         <p style="font-size:1rem;font-weight:700;color:var(--text-dark);margin-bottom:6px;"><i class="fas fa-pen-alt" style="margin-right:6px;"></i>Refleksi Harian</p>
                         <p style="font-size:0.82rem;color:var(--text-gray);margin-bottom:20px;">Ceritakan pengalaman atau perasaanmu hari ini. Tidak ada yang menghakimi.</p>
@@ -6543,7 +6531,7 @@
                                 <i class="fas fa-clipboard-list" style="color:white;font-size:1.5rem;"></i>
                             </div>
                             <h3 style="font-size:1rem;font-weight:700;color:var(--text-dark);margin-bottom:8px;">Skrining Kesehatan Mental</h3>
-                            <p style="font-size:0.82rem;color:var(--text-gray);line-height:1.7;margin-bottom:8px;">6 pertanyaan singkat untuk menilai kondisi stres, kecemasan, depresi, kualitas tidur, energi, dan relasi sosialmu saat ini.</p>
+                            <p style="font-size:0.82rem;color:var(--text-gray);line-height:1.7;margin-bottom:8px;">10 pernyataan dengan skala 1–7 untuk mengetahui kondisi mental hari ini secara lebih mendalam. Skor dihitung setelah seluruh pernyataan dijawab.</p>
                             <p style="font-size:0.75rem;color:var(--text-light);margin-bottom:24px;"><i class="fas fa-shield-alt" style="margin-right:4px;color:#0d9488;"></i>Bersifat pribadi · Tidak tersimpan ke server</p>
                             <button onclick="mulaiSkrining()" style="background:linear-gradient(135deg,#8b5cf6,#6366f1);color:white;border:none;padding:14px 36px;border-radius:50px;font-family:'Poppins',sans-serif;font-size:0.9rem;font-weight:600;cursor:pointer;box-shadow:0 4px 15px rgba(139,92,246,0.35);transition:all .3s;">
                                 <i class="fas fa-play" style="margin-right:8px;"></i>Mulai Skrining
@@ -6583,77 +6571,12 @@
                                 <button onclick="resetSkrining()" style="flex:1;background:rgba(139,92,246,0.1);color:#8b5cf6;border:none;padding:12px 20px;border-radius:50px;font-family:'Poppins',sans-serif;font-size:0.82rem;font-weight:600;cursor:pointer;">
                                     <i class="fas fa-redo" style="margin-right:6px;"></i>Ulangi Skrining
                                 </button>
-                                <button onclick="moodSwitchTab('journal')" style="flex:1;background:linear-gradient(135deg,#8b5cf6,#6366f1);color:white;border:none;padding:12px 20px;border-radius:50px;font-family:'Poppins',sans-serif;font-size:0.82rem;font-weight:600;cursor:pointer;box-shadow:0 4px 12px rgba(139,92,246,0.3);">
-                                    <i class="fas fa-journal-whills" style="margin-right:6px;"></i>Tulis di Journal
-                                </button>
+
                             </div>
                         </div>
                     </div>
 
-                    <!-- PANEL: HIFZ JOURNAL (CBT-based) -->
-                    <div id="panel-journal" style="display:none;background:linear-gradient(135deg,#fff7ed,#fef3c7);padding:24px 20px;">
-                        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
-                            <div style="width:36px;height:36px;background:linear-gradient(135deg,#f59e0b,#f97316);border-radius:10px;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(245,158,11,0.3);flex-shrink:0;">
-                                <i class="fas fa-journal-whills" style="color:white;font-size:0.9rem;"></i>
-                            </div>
-                            <div>
-                                <p style="font-size:0.92rem;font-weight:700;color:var(--text-dark);margin:0;">HIFZ Journal</p>
-                                <p style="font-size:0.7rem;color:var(--text-gray);margin:0;">Ekspresikan & proses kondisimu hari ini</p>
-                            </div>
-                        </div>
-                        <p style="font-size:0.72rem;color:var(--text-light);margin-bottom:18px;margin-top:6px;"><i class="fas fa-lock" style="margin-right:4px;"></i>Hanya tersimpan di perangkatmu · Bersifat privat</p>
 
-                        <!-- Field 1: Dirasakan -->
-                        <div class="journal-field" style="margin-bottom:18px;">
-                            <label style="display:flex;align-items:center;gap:8px;font-size:0.82rem;font-weight:700;color:var(--text-dark);margin-bottom:8px;">
-                                <span style="width:28px;height:28px;background:linear-gradient(135deg,#f59e0b,#f97316);border-radius:8px;display:inline-flex;align-items:center;justify-content:center;color:white;font-size:0.72rem;font-weight:800;flex-shrink:0;">1</span>
-                                Apa yang kamu rasakan?
-                            </label>
-                            <p class="journal-hint" style="font-size:0.74rem;color:var(--text-gray);margin-bottom:8px;padding-left:36px;">Gambarkan emosi atau perasaan yang muncul saat ini — senang, cemas, lelah, kosong, campur aduk, dll.</p>
-                            <textarea id="journal-rasakan" placeholder="Aku merasa cemas dan tidak tenang, seperti ada sesuatu yang mengganjal..." style="width:100%;height:80px;border:1.5px solid rgba(245,158,11,0.3);border-radius:12px;padding:12px 14px;font-family:'Poppins',sans-serif;font-size:0.85rem;color:var(--text-dark);background:white;resize:none;outline:none;transition:border .3s;line-height:1.7;box-sizing:border-box;" onfocus="this.style.borderColor='#f59e0b'" onblur="this.style.borderColor='rgba(245,158,11,0.3)'"></textarea>
-                        </div>
-
-                        <!-- Field 2: Terjadi -->
-                        <div class="journal-field" style="margin-bottom:18px;">
-                            <label style="display:flex;align-items:center;gap:8px;font-size:0.82rem;font-weight:700;color:var(--text-dark);margin-bottom:8px;">
-                                <span style="width:28px;height:28px;background:linear-gradient(135deg,#10b981,#0d9488);border-radius:8px;display:inline-flex;align-items:center;justify-content:center;color:white;font-size:0.72rem;font-weight:800;flex-shrink:0;">2</span>
-                                Apa yang terjadi?
-                            </label>
-                            <p class="journal-hint" style="font-size:0.74rem;color:var(--text-gray);margin-bottom:8px;padding-left:36px;">Ceritakan situasi atau kejadian yang memicu perasaan tersebut secara singkat dan faktual.</p>
-                            <textarea id="journal-terjadi" placeholder="Tadi presentasi di kelas, tapi aku lupa beberapa poin dan dosen bertanya hal yang tidak aku siapkan..." style="width:100%;height:80px;border:1.5px solid rgba(16,185,129,0.3);border-radius:12px;padding:12px 14px;font-family:'Poppins',sans-serif;font-size:0.85rem;color:var(--text-dark);background:white;resize:none;outline:none;transition:border .3s;line-height:1.7;box-sizing:border-box;" onfocus="this.style.borderColor='#10b981'" onblur="this.style.borderColor='rgba(16,185,129,0.3)'"></textarea>
-                        </div>
-
-                        <!-- Field 3: Dipikirkan -->
-                        <div class="journal-field" style="margin-bottom:18px;">
-                            <label style="display:flex;align-items:center;gap:8px;font-size:0.82rem;font-weight:700;color:var(--text-dark);margin-bottom:8px;">
-                                <span style="width:28px;height:28px;background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:8px;display:inline-flex;align-items:center;justify-content:center;color:white;font-size:0.72rem;font-weight:800;flex-shrink:0;">3</span>
-                                Apa yang kamu pikirkan?
-                            </label>
-                            <p class="journal-hint" style="font-size:0.74rem;color:var(--text-gray);margin-bottom:8px;padding-left:36px;">Apa yang kamu katakan pada dirimu sendiri tentang kejadian itu?</p>
-                            <textarea id="journal-pikirkan" placeholder='"Aku pasti terlihat bodoh. Dosen pasti kecewa. Aku tidak cukup baik."' style="width:100%;height:80px;border:1.5px solid rgba(99,102,241,0.3);border-radius:12px;padding:12px 14px;font-family:'Poppins',sans-serif;font-size:0.85rem;color:var(--text-dark);background:white;resize:none;outline:none;transition:border .3s;line-height:1.7;box-sizing:border-box;" onfocus="this.style.borderColor='#6366f1'" onblur="this.style.borderColor='rgba(99,102,241,0.3)'"></textarea>
-                        </div>
-
-                        <!-- Field 4: Dilakukan -->
-                        <div class="journal-field" style="margin-bottom:24px;">
-                            <label style="display:flex;align-items:center;gap:8px;font-size:0.82rem;font-weight:700;color:var(--text-dark);margin-bottom:8px;">
-                                <span style="width:28px;height:28px;background:linear-gradient(135deg,#ec4899,#f43f5e);border-radius:8px;display:inline-flex;align-items:center;justify-content:center;color:white;font-size:0.72rem;font-weight:800;flex-shrink:0;">4</span>
-                                Apa yang sudah atau ingin kamu lakukan?
-                            </label>
-                            <p class="journal-hint" style="font-size:0.74rem;color:var(--text-gray);margin-bottom:8px;padding-left:36px;">Tindakan yang sudah diambil, atau yang ingin kamu lakukan untuk merespons situasi ini.</p>
-                            <textarea id="journal-lakukan" placeholder="Aku memilih diam dan pulang lebih cepat. Ingin bicara ke teman, tapi belum berani..." style="width:100%;height:80px;border:1.5px solid rgba(236,72,153,0.3);border-radius:12px;padding:12px 14px;font-family:'Poppins',sans-serif;font-size:0.85rem;color:var(--text-dark);background:white;resize:none;outline:none;transition:border .3s;line-height:1.7;box-sizing:border-box;" onfocus="this.style.borderColor='#ec4899'" onblur="this.style.borderColor='rgba(236,72,153,0.3)'"></textarea>
-                        </div>
-
-                        <button onclick="simpanJournal()" style="background:linear-gradient(135deg,#f59e0b,#f97316);color:white;border:none;padding:12px 28px;border-radius:50px;font-family:'Poppins',sans-serif;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all .3s;box-shadow:0 4px 15px rgba(245,158,11,0.35);margin-bottom:20px;display:block;width:100%;">
-                            <i class="fas fa-save" style="margin-right:7px;"></i>Simpan Entri Journal
-                        </button>
-                        <div id="journal-save-msg" style="text-align:center;font-size:0.78rem;min-height:18px;margin-top:-14px;margin-bottom:14px;"></div>
-
-                        <!-- Journal History -->
-                        <div>
-                            <p style="font-size:0.82rem;font-weight:700;color:var(--text-dark);margin-bottom:12px;"><i class="fas fa-history" style="color:#f59e0b;margin-right:6px;"></i>Riwayat Journal</p>
-                            <div id="journalList" style="display:flex;flex-direction:column;gap:12px;"></div>
-                        </div>
-                    </div>
 
                 </div>
             </div>
@@ -7429,12 +7352,11 @@
                                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
                                     <div>
                                         <p style="font-size:0.88rem;font-weight:700;color:var(--text-dark);">Tren 14 Hari Terakhir</p>
-                                        <p style="font-size:0.73rem;color:var(--text-gray);">Mood · Stres · Keputusasaan</p>
+                                        <p style="font-size:0.73rem;color:var(--text-gray);">Mood · Kesehatan Mental</p>
                                     </div>
                                     <div style="display:flex;gap:14px;font-size:0.72rem;color:var(--text-gray);align-items:center;flex-wrap:wrap;">
                                         <span><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#6366f1;margin-right:4px;"></span>Mood</span>
-                                        <span><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#f97316;margin-right:4px;"></span>Stres</span>
-                                        <span><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#ef4444;margin-right:4px;"></span>Keputusasaan</span>
+                                        <span><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#0d9488;margin-right:4px;"></span>Kesehatan Mental</span>
                                     </div>
                                 </div>
                                 <div style="position:relative;height:210px;">
@@ -7504,18 +7426,15 @@
             function syntheticData() {
                 const today = new Date();
                 const rows = [];
-                // Simulate declining mood + rising stress over 14 days
+                // Simulate declining mood + declining mental health over 14 days
                 const moodBase   = [4,4,3,4,3,3,2,3,2,2,1,2,2,1];
-                const stressBase = [2,2,3,2,3,4,3,4,4,5,4,5,5,5];
-                const hopeBase   = [1,1,1,2,2,2,3,2,3,3,4,3,4,4]; // 1=harapan penuh, 5=keputusasaan
+                const mentalBase = [4,4,4,3,4,3,3,2,3,2,2,2,1,2];
                 for (let i = 13; i >= 0; i--) {
                     const d = new Date(today); d.setDate(d.getDate() - i);
                     rows.push({
                         created_at  : d.toISOString(),
                         mood        : moodBase[13 - i],
-                        stress      : stressBase[13 - i],
-                        hopelessness: hopeBase[13 - i],
-                        withdraw    : (13 - i) > 8 ? 1 : 0
+                        mental_health: mentalBase[13 - i]
                     });
                 }
                 return rows;
@@ -7526,7 +7445,7 @@
                 try {
                     const cutoff = new Date();
                     cutoff.setDate(cutoff.getDate() - 14);
-                    const url = `${SUPABASE_URL}/rest/v1/${TABLE_MOOD}?select=created_at,mood,stress,hopelessness,withdraw&created_at=gte.${cutoff.toISOString()}&order=created_at.asc&limit=100`;
+                    const url = `${SUPABASE_URL}/rest/v1/${TABLE_MOOD}?select=created_at,mood,mental_health&created_at=gte.${cutoff.toISOString()}&order=created_at.asc&limit=100`;
                     const res = await fetch(url, {
                         headers: {
                             'apikey'       : SUPABASE_KEY,
@@ -7560,27 +7479,16 @@
                     score += moodSlope < -0.6 ? 2 : 1;
                 }
 
-                // 2. Stress rising
-                const stress = recent.map(r => Number(r.stress || 2));
-                const stressSlope = linSlope(stress);
-                if (stressSlope > 0.3) {
-                    patterns.push({ label: 'Stres Meningkat', icon: 'fas fa-brain', color: '#f97316', desc: 'Level stres menunjukkan tren naik yang perlu diperhatikan.' });
-                    score += stressSlope > 0.6 ? 2 : 1;
-                }
-
-                // 3. Social withdrawal
-                const withdrawDays = recent.filter(r => Number(r.withdraw) >= 1).length;
-                if (withdrawDays >= 3) {
-                    patterns.push({ label: 'Menarik Diri', icon: 'fas fa-user-slash', color: '#8b5cf6', desc: `Terdeteksi ${withdrawDays} hari penarikan diri dari aktivitas sosial.` });
-                    score += withdrawDays >= 5 ? 2 : 1;
-                }
-
-                // 4. Hopelessness
-                const hope = recent.map(r => Number(r.hopelessness || 1));
-                const avgHope = hope.reduce((a,b) => a+b, 0) / hope.length;
-                if (avgHope >= 3.5) {
-                    patterns.push({ label: 'Tanda Keputusasaan', icon: 'fas fa-cloud-rain', color: '#ef4444', desc: 'Level keputusasaan rata-rata berada di zona yang memerlukan perhatian.' });
-                    score += avgHope >= 4 ? 3 : 2;
+                // 2. Mental health decline
+                const mental = recent.map(r => Number(r.mental_health || 3));
+                const mentalSlope = linSlope(mental);
+                const avgMental = mental.reduce((a,b) => a+b, 0) / mental.length;
+                if (mentalSlope < -0.3) {
+                    patterns.push({ label: 'Kesehatan Mental Menurun', icon: 'fas fa-brain', color: '#0d9488', desc: 'Kondisi kesehatan mental menunjukkan tren menurun yang perlu diperhatikan.' });
+                    score += mentalSlope < -0.6 ? 2 : 1;
+                } else if (avgMental <= 2) {
+                    patterns.push({ label: 'Kesehatan Mental Rendah', icon: 'fas fa-brain', color: '#0d9488', desc: 'Rata-rata kesehatan mental berada di zona yang memerlukan perhatian.' });
+                    score += avgMental <= 1.5 ? 2 : 1;
                 }
 
                 return { score, patterns };
@@ -7690,7 +7598,7 @@
 
                 // Prepare 14-day grid
                 const today = new Date();
-                const labels = [], moodArr = [], stressArr = [], hopeArr = [];
+                const labels = [], moodArr = [], mentalArr = [];
 
                 for (let i = 13; i >= 0; i--) {
                     const d = new Date(today); d.setDate(d.getDate() - i);
@@ -7700,8 +7608,7 @@
                     // Find matching row
                     const match = rows.find(r => r.created_at && r.created_at.slice(0, 10) === key);
                     moodArr.push(match ? Number(match.mood || null) : null);
-                    stressArr.push(match ? Number(match.stress || null) : null);
-                    hopeArr.push(match ? Number(match.hopelessness || null) : null);
+                    mentalArr.push(match ? Number(match.mental_health || null) : null);
                 }
 
                 alertChart = new Chart(canvas, {
@@ -7722,29 +7629,16 @@
                                 borderWidth: 2.5
                             },
                             {
-                                label: 'Stres',
-                                data: stressArr,
-                                borderColor: '#f97316',
-                                backgroundColor: 'rgba(249,115,22,0.06)',
+                                label: 'Kesehatan Mental',
+                                data: mentalArr,
+                                borderColor: '#0d9488',
+                                backgroundColor: 'rgba(13,148,136,0.08)',
                                 tension: 0.4,
                                 fill: false,
                                 pointRadius: 4,
-                                pointBackgroundColor: '#f97316',
+                                pointBackgroundColor: '#0d9488',
                                 spanGaps: true,
                                 borderWidth: 2.5
-                            },
-                            {
-                                label: 'Keputusasaan',
-                                data: hopeArr,
-                                borderColor: '#ef4444',
-                                backgroundColor: 'rgba(239,68,68,0.06)',
-                                tension: 0.4,
-                                fill: false,
-                                pointRadius: 4,
-                                pointBackgroundColor: '#ef4444',
-                                spanGaps: true,
-                                borderWidth: 2.5,
-                                borderDash: [4,3]
                             }
                         ]
                     },
@@ -8142,7 +8036,7 @@
             <div class="section-header reveal">
                 <span class="section-badge">Preview Platform</span>
                 <h2>Profil Ringkasan</h2>
-                <p>Pantau perkembangan emosi, aktivitas komunitas, dan progresmu dalam satu tampilan</p>
+                <p>Pantau perkembangan mood, aktivitas komunitas, dan progresmu dalam satu tampilan</p>
             </div>
             <div class="dashboard-mockup reveal">
                 <div class="dashboard-header">
