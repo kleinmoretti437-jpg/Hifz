@@ -4475,14 +4475,13 @@
                     const { data: { user } } = await window._sb.auth.getUser();
                     if (user) {
                         const uid = user.id;
-                        const moodLabel = MOOD_LABELS[selectedMoodVal] || '';
                         await window._sb.from('hifz_check_entries').insert({
                             user_id: uid,
-                            mood: moodLabel,
+                            mood: selectedMoodVal,
                             stress: selectedMoodVal,
                             hopelessness: selectedMoodVal,
                             withdraw: selectedMoodVal,
-                            note: null
+                            note: MOOD_LABELS[selectedMoodVal] || null
                         });
                         _authToast('☁️ Mood tersimpan ke cloud', 'success');
                         if (window.refreshDashboard) window.refreshDashboard();
@@ -5801,7 +5800,7 @@
                 if (error) throw error;
                 if (data && data.length > 0) {
                     // Petakan ke array 7 slot (urutan lama→baru), null jika tidak ada
-                    const scores = data.map(e => e.score || null).reverse();
+                    const scores = data.map(e => e.mood || null).reverse();
                     while (scores.length < 7) scores.unshift(null);
                     if (window._hn_setMoodData) window._hn_setMoodData(scores);
                     if (window._hn_updateChartAndSummary) window._hn_updateChartAndSummary();
