@@ -2631,7 +2631,7 @@
             <i class="fas fa-chevron-right" style="font-size:0.75rem;opacity:0.6;"></i>
         </a>
         <span class="mnav-label">Akun</span>
-        <a href="#" onclick="closeMobileNav(); setTimeout(function(){ openAuthModal('register'); }, 420); return false;" style="color:var(--primary);font-weight:600;"><i class="fas fa-user-plus" style="width:18px;margin-right:8px;"></i>Daftar / Masuk</a>
+        <a href="#" onclick="openAuthModal('register'); closeMobileNav(); return false;" style="color:var(--primary);font-weight:600;"><i class="fas fa-user-plus" style="width:18px;margin-right:8px;"></i>Daftar / Masuk</a>
     </div>
     <!-- Mobile Fitur Bottom Sheet -->
     <div id="mobileFiturOverlay" onclick="closeMobileFiturSheet()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:1100;backdrop-filter:blur(4px);opacity:0;transition:opacity 0.3s ease;"></div>
@@ -3434,6 +3434,28 @@
 
     <script>
         // ── GLOBAL HELPER — must be defined before ALL feature scripts ──
+
+        // _authToast didefinisikan di sini sebagai window global agar tersedia
+        // untuk semua script block (skrining, jurnal, refleksi, mood check-in)
+        // tanpa tergantung urutan eksekusi script block lain di bawah.
+        window._authToast = function(msg, type) {
+            if (typeof showHnToast === 'function') { showHnToast(msg, type); return; }
+            const bgMap = { error: '#dc2626', success: '#0d9488', info: '#475569' };
+            const bg = bgMap[type] || '#0d9488';
+            const div = document.createElement('div');
+            div.textContent = msg;
+            div.style.cssText = `
+                position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+                background:${bg};color:#fff;
+                padding:12px 24px;border-radius:50px;font-size:0.85rem;font-weight:600;
+                z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,0.15);
+                animation:fadeInUp 0.3s ease;font-family:'Poppins',sans-serif;
+                white-space:nowrap;max-width:90vw;text-overflow:ellipsis;overflow:hidden;
+            `;
+            document.body.appendChild(div);
+            setTimeout(() => div.remove(), 3500);
+        };
+
         function renderIconHtml(icon, size, color) {
             size = size || '1.4rem';
             color = color || 'inherit';
@@ -3604,6 +3626,8 @@
         function createMoodMiniChart() {
             const ctx = document.getElementById('moodMiniChart');
             if (!ctx) return;
+            const _existing = Chart.getChart(ctx);
+            if (_existing) _existing.destroy();
             new Chart(ctx, {
                 type: 'line',
                 data: {
@@ -3712,6 +3736,7 @@
         function createMoodChart() {
             const ctx = document.getElementById('moodChart');
             if (!ctx) return;
+            if (window._dashChart) { window._dashChart.destroy(); window._dashChart = null; }
 
             window._dashChart = new Chart(ctx, {
                 type: 'line',
@@ -3879,6 +3904,8 @@
             function initMoodChart() {
                 const ctx = document.getElementById('moodMiniChart');
                 if (!ctx) return;
+                const _existing = Chart.getChart(ctx);
+                if (_existing) _existing.destroy();
                 const labels = DAYS.slice(0,6).concat(['Hari Ini']);
                 window._miniChart = moodChartInstance = new Chart(ctx, {
                     type: 'line',
@@ -4769,7 +4796,9 @@
         });
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function(e) {
-                const target = document.querySelector(this.getAttribute('href'));
+                const href = this.getAttribute('href');
+                if (!href || href === '#') return; // guard: skip bare # yang tidak valid sebagai selector
+                const target = document.querySelector(href);
                 if (target) {
                     e.preventDefault();
                     target.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -5567,10 +5596,11 @@
             tab = tab || 'login';
             const m = document.getElementById('authModal');
             if (!m) { alert('Modal tidak ditemukan!'); return; }
-            // Set display:flex eksplisit — lebih andal di mobile daripada reset ke ''
+            // Pastikan display diset ke flex terlebih dahulu
             m.style.display = 'flex';
-            // Double rAF: frame pertama browser proses display,
-            // frame kedua baru terapkan class active agar CSS transition berjalan
+            // Double rAF: frame pertama browser terapkan display,
+            // frame kedua baru tambah class active agar transisi CSS berjalan
+            // (penting untuk mobile — satu frame saja tidak cukup)
             requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
                     m.classList.add('active');
